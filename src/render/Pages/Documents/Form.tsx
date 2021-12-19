@@ -1,0 +1,199 @@
+import React, { FC, useEffect, useState } from "react";
+import {
+  Button,
+  ButtonVariant,
+  Card,
+  CardBody,
+  CardTitle,
+  Form,
+  FormGroup,
+  FormSelect,
+  FormSelectOption,
+  Grid,
+  GridItem,
+  InputGroup,
+  TextInput
+} from "@patternfly/react-core";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { addNewDocument, selectDocumentToUpload, updateDocument } from "../../store/database";
+import { Document } from "../../types";
+import uniqueSlugHelper from "../../Utilities/uniqueSlugHelper";
+
+const DocumentForm: FC<Record<string, never>> = () => {
+  const { slug } = useParams() as { slug?: string };
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const documents = useAppSelector(state => state.database.documents);
+  const selectedPath = useAppSelector(state => state.database?.meta?.selectedPath ?? '');
+  const projectDropdownOptions = useAppSelector(state => 
+    Object.entries(state.database.projects)
+      .map(([slug, project]) => ({ value: slug, label: project.title }))
+    );
+
+  const [form, setForm] = useState<Document>({
+    title: '',
+    ext: '',
+    projectSlug: './',
+  });
+  const [formSlug, setFormSlug] = useState('');
+
+  useEffect(() => {
+    setFormSlug(
+      uniqueSlugHelper(form.title)
+    );
+  }, [form.title]);
+
+  useEffect(() => {
+    if (slug && documents[slug]) {
+      setForm({ ...documents[slug] });
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    const extReg = /(?:\.([^.]+))?$/;
+    if (selectedPath && !form.title) {
+      setForm(current => ({
+        ...current,
+        title: selectedPath.replace(/^.*[\\\/]/, ''),
+        ext: extReg.exec(selectedPath)?.[1] ?? ''
+      }))
+    }
+  }, [selectedPath])
+
+  const projectDropdownOnChange = (projectSlug: string) => {
+    setForm(current => ({
+      ...current,
+      projectSlug
+    }));
+  };
+
+  const onSave = () => {
+    if (slug)
+      dispatch(updateDocument(slug, formSlug, form));
+    else
+      dispatch(addNewDocument(selectedPath, formSlug, form));
+
+    navigate(`/document/${formSlug}`);
+  };
+
+  const onCancel = () => {
+    navigate('/document')
+  };
+
+  return (
+    <Grid hasGutter>
+      <GridItem span={12}>
+        <Card>
+          <CardTitle>Create a new document</CardTitle>
+          <CardBody>
+            You can create a new document here.
+          </CardBody>
+        </Card>
+      </GridItem>
+      <GridItem md={6} sm={12}>
+        <Card>
+          <CardTitle>Document details</CardTitle>
+          <CardBody>
+            <Form>
+              {slug && (
+                <FormGroup label="Old slug (curent document name on disk)" fieldId="old-slug">
+                  <TextInput
+                    isRequired
+                    type="text"
+                    id="old-slug"
+                    name="old-slug"
+                    value={slug}
+                    isReadOnly
+                  />
+                </FormGroup>
+              )}
+              <FormGroup label="Slug (document name on disk)" fieldId="slug">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="slug"
+                  name="slug"
+                  value={formSlug}
+                  isReadOnly
+                />
+              </FormGroup>
+              <FormGroup label="Title (if left empty will get from the document)" isRequired fieldId="title">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={form.title}
+                  onChange={(title) => setForm({ ...form, title })}
+                />
+              </FormGroup>
+              {!slug && (
+                <FormGroup fieldId="upload-document" isRequired label="Select the document from the disk">
+                  <InputGroup>
+                    <TextInput
+                      id="upload-document"
+                      type="text"
+                      aria-label="upload document"
+                      value={selectedPath}
+                      isReadOnly
+                    />
+                    <Button
+                      variant={ButtonVariant.primary}
+                      onClick={() => dispatch(selectDocumentToUpload())}
+                    >
+                      Select a document
+                    </Button>
+                  </InputGroup>
+                </FormGroup>
+              )}
+              {slug && (<p>TODO: Add a link to open the document</p>)}
+              <FormGroup label="Project" fieldId="project">
+                <FormSelect
+                  value={form.projectSlug}
+                  onChange={projectDropdownOnChange}
+                  aria-label="FormSelect Input"
+                >
+                  <FormSelectOption
+                    key={'default'}
+                    value={'./'}
+                    label={'No project'}
+                  />
+                  {projectDropdownOptions.map((option) => (
+                    <FormSelectOption
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            </Form>
+          </CardBody>
+        </Card>
+      </GridItem>
+      <GridItem md={12} sm={12}>
+        <Card>
+          <CardBody>
+            <Button
+              variant={ButtonVariant.primary}
+              onClick={onSave}
+            >
+              Save
+            </Button>
+            {' '}
+            <Button
+              variant={ButtonVariant.link}
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          </CardBody>
+        </Card>
+      </GridItem>
+    </Grid>
+  );
+};
+
+export default DocumentForm;
