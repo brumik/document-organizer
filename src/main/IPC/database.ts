@@ -5,6 +5,9 @@ import namespacedSend from "./general/sendHelper";
 import fs from 'fs';
 import path from 'path';
 
+// Import types
+import { Project, Document } from '../../types';
+
 const copyDirectory = (source: string, destination: string) => {
   fs.mkdirSync(destination, { recursive: true });
 
@@ -16,22 +19,6 @@ const copyDirectory = (source: string, destination: string) => {
       ? copyDirectory(sourcePath, destinationPath)
       : fs.copyFileSync(sourcePath, destinationPath);
   });
-}
-
-export interface Project {
-  title: string;
-  description: string;
-}
-
-export interface Document {
-  title: string;
-  ext: string;
-  projectSlug: string;
-}
-
-export interface DatabaseType {
-  projects: Record<string, Project>;
-  documents: Record<string, Document>;
 }
 
 const nameAPI = "database";
