@@ -24,7 +24,15 @@ const generateContextBridge = (apis: IPC[]): void => {
           } else {
             console.log(`[Error] Invalid receive channel name: ${channel}`);
           }
-        }
+        },
+        invoke: (channel: string, message: any): void => {
+          if (api.validInvokeChannel.includes(channel)) {
+            console.log(`[Log] Invoke channel active: ${channel}`, message);
+            ipcRenderer.invoke(`${api.nameAPI}.${channel}`, message);
+          } else {
+            console.log(`[Error] Invalid invoke channel name: ${channel}`);
+          }
+        },
       }
     }
   });

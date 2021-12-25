@@ -261,7 +261,9 @@ const validReceiveChannel: string[] = [
 const database = new IPC({
   nameAPI,
   validSendChannel,
-  validReceiveChannel
+  validReceiveChannel,
+  validHandleChannel: {},
+  validInvokeChannel: [],
 });
 
 export default database;

@@ -3,11 +3,15 @@ declare module "*.png" {
   export = value;
 }
 
+interface Channels {
+  send: (channel: string, message?: any) => void,
+  receive: (channel: string, callback: (message: any) => void) => void,
+  invoke: (channel: string, message?: any) => Promise<any>,
+}
+
 interface Window {
   api: {
-    [key: string]: {
-      send: (channel: string, message?: any) => void,
-      receive: (channel: string, callback: (message: any) => void) => void,
-    }
+    database: Channels,
+    settings: Channels,
   }
 }
