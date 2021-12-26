@@ -9,14 +9,11 @@ const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
   const dispatch = useAppDispatch();
 
-  const { title, description } = useAppSelector(state => state.database.projects[slug]) ?? {
+  const { title, description } = useAppSelector(state => state.database.projects.find(p => p.slug === slug)) ?? {
     title: "Undefined",
     description: "Undefined",
   };
-
-  const relatedDocuments = useAppSelector(state =>
-    Object.entries(state.database.documents)
-      .filter(([,doc]) => doc.projectSlug === slug));
+  const relatedDocuments = useAppSelector(state => state.database.documents.filter(d => d.projectSlug === slug));
 
   return (
     <Stack hasGutter>
@@ -39,9 +36,9 @@ const Show: FC<Record<string, never>> = () => {
       </StackItem>
       <StackItem>
         <Gallery hasGutter>
-          {relatedDocuments.map(([document]) => (
-            <GalleryItem key={document}>
-              <DocumentListItem slug={document} />
+          {relatedDocuments.map((document) => (
+            <GalleryItem key={document.slug}>
+              <DocumentListItem slug={document.slug} />
             </GalleryItem>
           ))}
         </Gallery>

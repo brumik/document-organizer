@@ -9,12 +9,12 @@ import SimpleLink from '../../Utilities/SimpleLink';
 const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
   const dispatch = useAppDispatch();
-  const { title, projectSlug } = useAppSelector(state => state.database.documents[slug]) ?? {
+  const { title, projectSlug } = useAppSelector(state => state.database.documents.find(p => p.slug === slug)) ?? {
     title: "Undefined",
     projectSlug: '',
   };
 
-  const project = useAppSelector(state => state.database.projects[projectSlug]) ?? {
+  const project = useAppSelector(state => state.database.projects.find(p => p.slug === projectSlug)) ?? {
     title: "Undefined",
     description: "Undefined",
   };

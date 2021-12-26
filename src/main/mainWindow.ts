@@ -23,17 +23,16 @@ class Main {
   createWindow() {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-      ...global.userPrefStore.get('windowBounds'),
+      ...global.preferencesStore.windowBounds,
       webPreferences: {
         nodeIntegration: false, // is default value after Electron v5
         contextIsolation: true, // protect against prototype pollution
-        enableRemoteModule: false, // turn off remote
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script 
       }
     });
 
     mainWindow.on('resize', () => {
-      global.userPrefStore.set('windowBounds', mainWindow.getBounds());
+      global.preferencesStore.windowBounds = mainWindow.getBounds();
     });
 
     // and load the index.html of the app.

@@ -2,32 +2,33 @@ import electron from 'electron';
 import path from 'path';
 import fs from 'fs';
 
-const parseDataFile = (filePath: string, defaults: Record<string, any>) => {
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error('No acces to file', filePath, error);
+const parseDataFile = <T>(filePath: string, defaults: T): T => {
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify(defaults), 'utf8');
     return defaults;
+  } else {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   }
-}
+};
 
-class Store {
+class Store<T> {
   protected path: string;
-  protected data: Record<string, any>;
+  protected data: T;
   protected configName: string;
+  protected basePath: string;
 
   constructor(params: {
     rootFolder?: string,
     configName: string,
-    defaults: Record<string, any>
+    defaults: T
   }) {
     this.configName = params.configName + '.json';
-    const userDataPath = params.rootFolder ?? electron.app.getPath('userData');
-    this.path = path.join(userDataPath, this.configName);
+    this.basePath = params.rootFolder ?? electron.app.getPath('userData');
+    this.path = path.join(this.basePath, this.configName);
     this.data = parseDataFile(this.path, params.defaults);
   }
 
-  protected updateData(data: Record<string, any>) {
+  protected updateData(data: T) {
     this.data = data;
     fs.writeFileSync(this.path, JSON.stringify(this.data), 'utf8');
   }
@@ -50,30 +51,13 @@ class Store {
     })
   }
 
-  reloadFromDisk() {
+  public reloadFromDisk() {
     this.data = parseDataFile(this.path, this.data);
   }
 
-  get(key: string) {
-    return this.data[key];
-  }
-
-  // TODO Delete
-  get all() {
+  public get all() {
     return this.data;
   };
-
-  // TODO Delete
-  set all(data: Record<string, any>) {
-    this.updateData(data);
-  }
-
-  set(key: string, val: any) {
-    this.updateData({
-      ...this.data,
-      [key]: val
-    })
-  }
 }
 
 export default Store;

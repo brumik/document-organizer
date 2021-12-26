@@ -5,24 +5,19 @@ import {
   State
 } from './types';
 
-export const setAll = (state: State): ActionTypes => ({
-  type: Action.setAll,
-  payload: state
-});
-
 export const sync = (state: State): ActionTypes => ({
   type: Action.sync,
   payload: state
 });
 
-export const addNewProject = (slug: string, project: Project): ActionTypes => ({
+export const addNewProject = (project: Project): ActionTypes => ({
   type: Action.addNewProject,
-  payload: { slug, project }
+  payload: { project }
 });
 
-export const updateProject = (oldSlug: string, newSlug: string, project: Project): ActionTypes => ({
+export const updateProject = (oldSlug: string, project: Project): ActionTypes => ({
   type: Action.updateProject,
-  payload: { oldSlug, newSlug, project }
+  payload: { oldSlug, project }
 });
 
 export const deleteProject = (slug: string): ActionTypes => ({
@@ -35,14 +30,14 @@ export const openProject = (slug: string): ActionTypes => ({
   payload: { slug }
 });
 
-export const addNewDocument = (path: string, slug: string, document: Document): ActionTypes => ({
+export const addNewDocument = (document: Document, originFile: string): ActionTypes => ({
   type: Action.addNewDocument,
-  payload: { path, slug, document }
+  payload: { document, originFile }
 });
 
-export const updateDocument = (oldSlug: string, newSlug: string, document: Document): ActionTypes => ({
+export const updateDocument = (oldSlug: string, document: Document): ActionTypes => ({
   type: Action.updateDocument,
-  payload: { oldSlug, newSlug, document }
+  payload: { oldSlug, document }
 });
 
 export const deleteDocument = (slug: string): ActionTypes => ({

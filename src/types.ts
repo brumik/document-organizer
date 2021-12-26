@@ -1,9 +1,11 @@
 export interface Project {
+  slug: string;
   title: string;
   description: string;
 }
 
 export interface Document {
+  slug: string;
   title: string;
   ext: string;
   projectSlug: string;

@@ -5,7 +5,7 @@ import ListItem from "./Components/ProjectListItem";
 import AddListItem from "../../Utilities/AddListItem";
 
 const List: FC<Record<string, never>> = () => {
-  const keys = useAppSelector(state => Object.keys(state.database.projects ?? {}));
+  const keys = useAppSelector(state => state.database.projects.map(p => p.slug) ?? []);
 
   return (
     <Stack hasGutter>

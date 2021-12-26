@@ -5,7 +5,7 @@ import ListItem from "./Components/DocumentListItem";
 import AddListItem from "../../Utilities/AddListItem";
 
 const List: FC<Record<string, never>> = () => {
-  const keys = useAppSelector(state => Object.keys(state.database.documents));
+  const keys = useAppSelector(state => state.database.documents.map(d => d.slug) ?? []);
 
   return (
     <Stack hasGutter>

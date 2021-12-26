@@ -26,7 +26,9 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { title } = useAppSelector(state => state.database.documents[slug]);
+  const { title } = useAppSelector(state => state.database.documents.find(d => d.slug === slug)) ?? {
+    title: ''
+  };
 
   const kebabDropDownItems = [
     <DropdownItem

@@ -1,29 +1,22 @@
-import { BrowserWindow, IpcMain } from "electron";
-import { APIChannels, SendChannels } from "./channelsInterface";
+import { BrowserWindow, IpcMain, IpcRenderer } from "electron";
+import { APIChannels, HandleChannels, SendChannels } from "./channelsInterface";
 
 export default class IPC {
-  private nameAPI: string = "api";
-  private validSendChannel: SendChannels = {};
-  private validReceiveChannel: string[] = [];
-  private validHandleChannel: SendChannels = {};
-  private validInvokeChannel: string[] = [];
+  protected nameAPI: string = "api";
+  protected validSendChannel: SendChannels = {};
+  protected validReceiveChannel: string[] = [];
+  protected validHandleChannel: HandleChannels = {};
+  protected validInvokeChannel: string[] = [];
 
   constructor(channels: APIChannels) {
     this.nameAPI = channels.nameAPI;
     this.validSendChannel = channels.validSendChannel;
     this.validReceiveChannel = channels.validReceiveChannel;
     this.validHandleChannel = channels.validHandleChannel;
-    this.validInvokeChannel = channels.validInvokeChannel;
   }
 
-  get channels(): APIChannels {
-    return {
-      nameAPI: this.nameAPI,
-      validSendChannel: this.validSendChannel,
-      validReceiveChannel: this.validReceiveChannel,
-      validHandleChannel: this.validHandleChannel,
-      validInvokeChannel: this.validInvokeChannel,
-    }
+  get name() {
+    return this.nameAPI;
   }
 
   initIpcMain(ipcMain: IpcMain, mainWindow: BrowserWindow) {
@@ -38,6 +31,35 @@ export default class IPC {
           this.validHandleChannel[key](mainWindow, event, message);
         });
       });
+    }
+  }
+
+  initBridge(ipcRenderer: IpcRenderer) {
+    return {
+      send: (channel: string, message: any): void => {
+        if (this.validSendChannel[channel]) {
+          console.log(`[Log] Send channel active: ${channel}`, message);
+          ipcRenderer.send(`${this.nameAPI}.${channel}`, message);
+        } else {
+          console.log(`[Error] Invalid send channel name: ${channel}`);
+        }
+      },
+      receive: (channel: string, callback: Function): void => {
+        if (this.validReceiveChannel.includes(channel)) {
+          console.log(`[Log] Receive channel active: ${channel}`);
+          ipcRenderer.on(`${this.nameAPI}.${channel}`, (_event, ...args) => callback(...args));
+        } else {
+          console.log(`[Error] Invalid receive channel name: ${channel}`);
+        }
+      },
+      invoke: (channel: string, message: any): void => {
+        if (Object.keys(this.validHandleChannel).includes(channel)) {
+          console.log(`[Log] Invoke channel active: ${channel}`, message);
+          ipcRenderer.invoke(`${this.nameAPI}.${channel}`, message);
+        } else {
+          console.log(`[Error] Invalid invoke channel name: ${channel}`);
+        }
+      },
     }
   }
 }

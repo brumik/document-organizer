@@ -7,7 +7,7 @@ const nameAPI = "settings";
 const send = namespacedSend(nameAPI);
 
 const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: never) => {
-  send(mainWindow, "getAll", global.userPrefStore.all);
+  send(mainWindow, "getAll", global.preferencesStore.all);
 }
 
 const setRootFolder = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: string) => {
@@ -17,11 +17,12 @@ const setRootFolder = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent,
   });
 
   if (rootPath) {
-    global.userPrefStore.set("rootFolder", rootPath[0]);
+    global.preferencesStore.rootFolder = rootPath[0];
     global.projectStore.move(rootPath[0]);
+    global.documentStore.move(rootPath[0]);
   }
 
-  send(mainWindow, "getAll", global.userPrefStore.all);
+  send(mainWindow, "getAll", global.preferencesStore.all);
 }
 
 // to Main
@@ -38,7 +39,8 @@ const validReceiveChannel: string[] = [
 const settings = new IPC({
   nameAPI,
   validSendChannel,
-  validReceiveChannel
+  validReceiveChannel,
+  validHandleChannel: {},
 });
 
 export default settings;

@@ -25,29 +25,30 @@ const DocumentForm: FC<Record<string, never>> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const documents = useAppSelector(state => state.database.documents);
+  const editedDoc = useAppSelector(state => state.database.documents.find(d => d.slug === slug));
   const selectedPath = useAppSelector(state => state.database?.meta?.selectedPath ?? '');
   const projectDropdownOptions = useAppSelector(state => 
-    Object.entries(state.database.projects)
-      .map(([slug, project]) => ({ value: slug, label: project.title }))
+    state.database.projects
+      .map(({ slug, title }) => ({ value: slug, label: title }))
     );
 
   const [form, setForm] = useState<Document>({
+    slug: '',
     title: '',
     ext: '',
     projectSlug: './',
   });
-  const [formSlug, setFormSlug] = useState('');
 
   useEffect(() => {
-    setFormSlug(
-      uniqueSlugHelper(form.title)
-    );
+    setForm(current => ({
+      ...current,
+      slug: uniqueSlugHelper(form.title)
+    }));
   }, [form.title]);
 
   useEffect(() => {
-    if (slug && documents[slug]) {
-      setForm({ ...documents[slug] });
+    if (editedDoc) {
+      setForm({ ...editedDoc });
     }
   }, [slug]);
 
@@ -71,11 +72,11 @@ const DocumentForm: FC<Record<string, never>> = () => {
 
   const onSave = () => {
     if (slug)
-      dispatch(updateDocument(slug, formSlug, form));
+      dispatch(updateDocument(slug, form));
     else
-      dispatch(addNewDocument(selectedPath, formSlug, form));
+      dispatch(addNewDocument(form, selectedPath));
 
-    navigate(`/document/${formSlug}`);
+    navigate(`/document/${form.slug}`);
   };
 
   const onCancel = () => {
@@ -115,7 +116,7 @@ const DocumentForm: FC<Record<string, never>> = () => {
                   type="text"
                   id="slug"
                   name="slug"
-                  value={formSlug}
+                  value={form.slug}
                   isReadOnly
                 />
               </FormGroup>

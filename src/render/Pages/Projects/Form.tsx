@@ -11,34 +11,34 @@ const ProjectForm: FC<Record<string, never>> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const projects = useAppSelector(state => state.database.projects);
+  const editedProject = useAppSelector(state => state.database.projects.find(p => p.slug === slug));
 
   const [form, setForm] = useState<Project>({
+    slug: '',
     title: '',
     description: '',
   });
 
-  const [formSlug, setFormSlug] = useState(slug ?? '');
-
   useEffect(() => {
-    setFormSlug(
-      uniqueSlugHelper(form.title)
-    );
+    setForm(current => ({
+      ...current,
+      slug: uniqueSlugHelper(form.title)
+    }));
   }, [form.title]);
 
   useEffect(() => {
-    if (slug && projects[slug]) {
-      setForm(projects[slug]);
+    if (editedProject) {
+      setForm(editedProject);
     }
   }, [slug]);
 
   const onSave = () => {
     if (slug)
-      dispatch(updateProject(slug, formSlug, form));
+      dispatch(updateProject(slug, form));
     else
-      dispatch(addNewProject(formSlug, form));
+      dispatch(addNewProject(form));
 
-    navigate(`/project/${formSlug}`);
+    navigate(`/project/${form.slug}`);
   };
 
   const onCancel = () => {
@@ -78,7 +78,7 @@ const ProjectForm: FC<Record<string, never>> = () => {
                   type="text"
                   id="slug"
                   name="slug"
-                  value={formSlug}
+                  value={form.slug}
                   isReadOnly
                 />
               </FormGroup>

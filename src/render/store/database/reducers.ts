@@ -5,8 +5,8 @@ import {
 } from './types';
 
 const initialState: State = {
-  projects: {},
-  documents: {},
+  projects: [],
+  documents: [],
 };
 
 const reducer = (
@@ -14,10 +14,6 @@ const reducer = (
   action: ActionTypes
 ): State => {
   switch (action.type) {
-    case Action.setAll:
-      // TODO DELETE
-      window.api.database.send('setAll', action.payload);
-      return action.payload;
     case Action.sync:
       return action.payload;
     case Action.selectDocumentToUploadResponse:

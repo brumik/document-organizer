@@ -1,15 +1,14 @@
 import { Project, Document } from "../../types";
 
 export interface State {
-  projects: Record<string, Project>;
-  documents: Record<string, Document>;
+  projects: Project[];
+  documents: Document[];
   meta?: {
     selectedPath?: string;
   }
 }
 
 export enum Action {
-  setAll = 'DATABASE_setAll',
   sync = 'DATABASE_sync',
   addNewProject = 'DATABASE_addNewProject',
   updateProject = 'DATABASE_updateProject',
@@ -25,11 +24,6 @@ export enum Action {
   openDocument = 'DATABASE_openDocument',
 }
 
-interface SetAll {
-  type: Action.setAll;
-  payload: State;
-}
-
 interface SyncAction {
   type: Action.sync;
   payload: State;
@@ -38,7 +32,6 @@ interface SyncAction {
 interface AddNewProjectAction {
   type: Action.addNewProject;
   payload: {
-    slug: string;
     project: Project;
   };
 }
@@ -47,7 +40,6 @@ interface UpdateProjectAction {
   type: Action.updateProject;
   payload: {
     oldSlug: string;
-    newSlug: string;
     project: Project;
   };
 }
@@ -65,8 +57,7 @@ interface OpenProjectAction {
 interface AddNewDocumentAction {
   type: Action.addNewDocument;
   payload: {
-    path: string;
-    slug: string;
+    originFile: string;
     document: Document;
   };
 }
@@ -75,7 +66,6 @@ interface UpdateDocumentAction {
   type: Action.updateDocument;
   payload: {
     oldSlug: string;
-    newSlug: string;
     document: Document;
   };
 }
@@ -111,7 +101,6 @@ interface ImportDatabaseAction {
 }
 
 export type ActionTypes =
-  | SetAll
   | SyncAction
   | AddNewProjectAction
   | UpdateProjectAction

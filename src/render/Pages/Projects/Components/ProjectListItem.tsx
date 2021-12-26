@@ -26,7 +26,10 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { title, description } = useAppSelector(state => state.database.projects[slug]);
+  const { title, description } = useAppSelector(state => state.database.projects.find(p => p.slug === slug)) ?? {
+    title: "Undefined",
+    description: "Undefined",
+  };
   const relatedDocuments = useAppSelector(state =>
     Object.entries(state.database.documents)
       .filter(([,doc]) => doc.projectSlug === slug));

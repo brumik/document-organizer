@@ -25,82 +25,41 @@ const nameAPI = "database";
 const send = namespacedSend(nameAPI);
 
 const getAll = (mainWindow: BrowserWindow) => {
-  send(mainWindow, "getAll", global.projectStore.all);
+  send(mainWindow, "getAll", {
+    projects: global.projectStore.all,
+    documents: global.documentStore.all
+  });
 };
 
 const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: never) => {
   getAll(mainWindow);
 }
 
-const setAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: Record<string, any>) => {
-  global.projectStore.all = message;
+interface AddNewProject { project: Project };
+const addNewProject = async (mainWindow: BrowserWindow, _event: Electron.IpcMainInvokeEvent, message: AddNewProject) => {
+  await global.projectStore.add(message.project);
   getAll(mainWindow);
 }
 
-interface AddNewProject { slug: string, project: Project };
-const addNewProject = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: AddNewProject) => {
-  fs.mkdir(path.join(global.userPrefStore.get('rootFolder'), message.slug), (err) => {
-    if (err)
-      throw err;
-
-    global.projectStore.all = {
-      ...global.projectStore.all,
-      projects: {
-        ...global.projectStore.all.projects,
-        [message.slug]: message.project
-      }
-    };
-    
-    getAll(mainWindow);
-  });
-}
-
-interface UpdateProject { oldSlug: string, newSlug: string, project: Project };
-const updateProject = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: UpdateProject) => {
-  const oldPath = path.join(global.userPrefStore.get('rootFolder'), message.oldSlug);
-  const newPath = path.join(global.userPrefStore.get('rootFolder'), message.newSlug);
-
-  fs.rename(oldPath, newPath, err => {
-    if (err)
-      throw err;
-
-    const tempStore = {
-      ...global.projectStore.all,
-      projects: {
-        ...global.projectStore.all.projects,
-        [message.newSlug]: message.project
-      }
-    };
-
-    delete tempStore.projects[message.oldSlug];
-
-    global.projectStore.all = tempStore;
-    getAll(mainWindow);
-  })
+interface UpdateProject { oldSlug: string, project: Project };
+const updateProject = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: UpdateProject) => {
+  await global.projectStore.update(message.oldSlug, message.project);
+  getAll(mainWindow);
 };
 
 interface DeleteProject { slug: string };
-const deleteProject = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: DeleteProject) => {
-  const delPath = path.join(global.userPrefStore.get('rootFolder'), message.slug);
-  fs.rmdir(delPath, err => {
-    if (err)
-      throw err;
-
-    const tempStore = {
-      ...global.projectStore.all,
-    };
-
-    delete tempStore.projects[message.slug];
-
-    global.projectStore.all = tempStore;
-    getAll(mainWindow);
-  })
+const deleteProject = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: DeleteProject) => {
+  await global.projectStore.remove(message.slug);
+  getAll(mainWindow);
 };
 
 interface OpenProject { slug: string };
 const openProject = (_mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: OpenProject) => {
-  const projectPath = path.join(global.userPrefStore.get('rootFolder'), message.slug);
-  shell.openPath(projectPath);
+  shell.openPath(global.projectStore.getPath(message.slug))
+    .then(errorStr => {
+      if (errorStr)
+        throw errorStr;
+    });
 }
 
 const selectDocumentToUpload = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: string) => {
@@ -112,111 +71,42 @@ const selectDocumentToUpload = (mainWindow: BrowserWindow, _event: Electron.IpcM
   send(mainWindow, "selectDocumentToUploadResponse", rootPath ? rootPath[0] : '');
 }
 
-interface AddNewDocument { path: string, slug: string, document: Document };
-const addNewDocument = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: AddNewDocument) => {
-  const destPath = path.join(
-    global.userPrefStore.get('rootFolder'),
-    message.document.projectSlug,
-    message.slug + '.' + message.document.ext);
-
-  fs.copyFile(message.path, destPath, err => {
-    if (err)
-      throw err;
-
-    global.projectStore.all = {
-      ...global.projectStore.all,
-      documents: {
-        ...global.projectStore.all.documents,
-        [message.slug]: message.document
-      }
-    };
-
-    getAll(mainWindow);
-  });
+interface AddNewDocument { originFile: string, document: Document };
+const addNewDocument = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: AddNewDocument) => {
+  await global.documentStore.add(message.document, message.originFile);
+  getAll(mainWindow);
 }
 
-interface UpdateDocument { oldSlug: string, newSlug: string, document: Document };
-const updateDocument = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: UpdateDocument) => {
-  const oldDocument = global.projectStore.all.documents[message.oldSlug] as Document;
-  const oldPath = path.join(
-    global.userPrefStore.get('rootFolder'),
-    oldDocument.projectSlug,
-    message.oldSlug + '.' + oldDocument.ext);
-
-  // When updating the document the ext (file) canno change, but 
-  // the ext can get '' so use the old one.
-  const newPath = path.join(
-    global.userPrefStore.get('rootFolder'),
-    message.document.projectSlug,
-    message.newSlug + '.' + oldDocument.ext);
-
-  fs.rename(oldPath, newPath, err => {
-    if (err)
-      throw err;
-
-    const tempStore = {
-      ...global.projectStore.all,
-      documents: {
-        ...global.projectStore.all.documents,
-        [message.newSlug]: message.document
-      }
-    };
-
-    delete tempStore.documents[message.oldSlug];
-
-    global.projectStore.all = tempStore;
-    getAll(mainWindow);
-  });
+interface UpdateDocument { oldSlug: string, document: Document };
+const updateDocument = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: UpdateDocument) => {
+  await global.documentStore.update(message.oldSlug, message.document);
+  getAll(mainWindow);
 }
 
 interface DeleteDocument { slug: string };
-const deleteDocument = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: DeleteDocument) => {
-  const document = global.projectStore.all.documents[message.slug] as Document;
-  const delPath = path.join(
-    global.userPrefStore.get('rootFolder'),
-    document.projectSlug,
-    message.slug + '.' + document.ext
-  );
-  
-  fs.unlink(delPath, err => {
-    if (err)
-      throw err;
-
-    const tempStore = {
-      ...global.projectStore.all,
-    };
-
-    delete tempStore.documents[message.slug];
-
-    global.projectStore.all = tempStore;
-    getAll(mainWindow);
-  });
+const deleteDocument = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: DeleteDocument) => {
+  await global.documentStore.remove(message.slug);
+  getAll(mainWindow);
 }
 
 interface OpenDocument { slug: string };
 const openDocument = (_mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: OpenDocument) => {
-  const document = global.projectStore.all.documents[message.slug] as Document;
-  const filePath = path.join(
-    global.userPrefStore.get('rootFolder'),
-    document.projectSlug,
-    message.slug + '.' + document.ext
-  );
-
-  shell.openPath(filePath).then(errorStr => {
-    if (errorStr)
-      throw errorStr;
-  });
+  shell.openPath(global.documentStore.getPath(message.slug))
+    .then(errorStr => {
+      if (errorStr)
+        throw errorStr;
+    });
 };
 
 const exportDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: string) => {
   const rootPath = dialog.showOpenDialogSync(mainWindow, {
     title: 'Export database',
-    defaultPath: global.userPrefStore.get('rootFolder'),
+    defaultPath: global.preferencesStore.rootFolder,
     properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
   });
 
   if (rootPath) {
-    copyDirectory(global.userPrefStore.get('rootFolder'), rootPath[0]);
+    copyDirectory(global.preferencesStore.rootFolder, rootPath[0]);
   }
 };
 
@@ -227,8 +117,8 @@ const importDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent
   });
 
   if (rootPath) {
-    fs.rmdirSync(global.userPrefStore.get('rootFolder'), { recursive: true });
-    copyDirectory(rootPath[0], global.userPrefStore.get('rootFolder'));
+    fs.rmdirSync(global.preferencesStore.rootFolder, { recursive: true });
+    copyDirectory(rootPath[0], global.preferencesStore.rootFolder);
   }
 
   global.projectStore.reloadFromDisk();
@@ -238,7 +128,6 @@ const importDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent
 // to Main
 const validSendChannel: SendChannels = {
   requestAll,
-  setAll,
   addNewProject,
   updateProject,
   deleteProject,
@@ -263,7 +152,6 @@ const database = new IPC({
   validSendChannel,
   validReceiveChannel,
   validHandleChannel: {},
-  validInvokeChannel: [],
 });
 
 export default database;
