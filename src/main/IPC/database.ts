@@ -1,4 +1,4 @@
-import { SendChannels } from "./general/channelsInterface";
+import { HandleChannelReturn, SendChannels } from "./general/channelsInterface";
 import IPC from "./general/icp";
 import { BrowserWindow, dialog, shell } from "electron";
 import namespacedSend from "./general/sendHelper";
@@ -21,6 +21,21 @@ const copyDirectory = (source: string, destination: string) => {
   });
 }
 
+const promiseResolver = async (fnc: Promise<void>): Promise<HandleChannelReturn> => {
+  try {
+    await fnc;
+    return {
+      error: false,
+      payload: undefined
+    };
+  } catch (error) {
+    return {
+      error: true,
+      payload: error as string
+    }
+  }
+}
+
 const nameAPI = "database";
 const send = namespacedSend(nameAPI);
 
@@ -31,20 +46,20 @@ const getAll = (mainWindow: BrowserWindow) => {
   });
 };
 
-const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: never) => {
+const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: Record<string, never>) => {
   getAll(mainWindow);
 }
 
 interface AddNewProject { project: Project };
-const addNewProject = async (mainWindow: BrowserWindow, _event: Electron.IpcMainInvokeEvent, message: AddNewProject) => {
-  await global.projectStore.add(message.project);
-  getAll(mainWindow);
+const addNewProject = (_mainWindow: BrowserWindow, _event: Electron.IpcMainInvokeEvent, message: AddNewProject) => {
+  return promiseResolver(global.projectStore.add(message.project));
 }
 
 interface UpdateProject { oldSlug: string, project: Project };
-const updateProject = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: UpdateProject) => {
-  await global.projectStore.update(message.oldSlug, message.project);
-  getAll(mainWindow);
+const updateProject = async (_mainWindow: BrowserWindow, _event: Electron.IpcMainInvokeEvent, message: UpdateProject) => {
+  return promiseResolver(
+    global.projectStore.update(message.oldSlug, message.project)
+  );
 };
 
 interface DeleteProject { slug: string };
@@ -128,8 +143,6 @@ const importDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent
 // to Main
 const validSendChannel: SendChannels = {
   requestAll,
-  addNewProject,
-  updateProject,
   deleteProject,
   openProject,
   selectDocumentToUpload,
@@ -151,7 +164,10 @@ const database = new IPC({
   nameAPI,
   validSendChannel,
   validReceiveChannel,
-  validHandleChannel: {},
+  validHandleChannel: {
+    addNewProject,
+    updateProject,
+  },
 });
 
 export default database;

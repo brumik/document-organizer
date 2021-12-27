@@ -22,14 +22,14 @@ export default class IPC {
   initIpcMain(ipcMain: IpcMain, mainWindow: BrowserWindow) {
     if (mainWindow) {
       Object.keys(this.validSendChannel).forEach(key => {
-        ipcMain.on(`${this.nameAPI}.${key}`, async (event, message) => {
-          this.validSendChannel[key](mainWindow, event, message);
-        });
+        ipcMain.on(`${this.nameAPI}.${key}`, async (event, message) =>
+          this.validSendChannel[key](mainWindow, event, message)
+        );
       });
       Object.keys(this.validHandleChannel).forEach(key => {
-        ipcMain.handle(`${this.nameAPI}.${key}`, async (event, message) => {
-          this.validHandleChannel[key](mainWindow, event, message);
-        });
+        ipcMain.handle(`${this.nameAPI}.${key}`, async (event, message) =>
+          this.validHandleChannel[key](mainWindow, event, message)
+        );
       });
     }
   }
@@ -52,12 +52,20 @@ export default class IPC {
           console.log(`[Error] Invalid receive channel name: ${channel}`);
         }
       },
-      invoke: (channel: string, message: any): void => {
+      invoke: (channel: string, message: any): Promise<void> => {
         if (Object.keys(this.validHandleChannel).includes(channel)) {
           console.log(`[Log] Invoke channel active: ${channel}`, message);
-          ipcRenderer.invoke(`${this.nameAPI}.${channel}`, message);
+          return ipcRenderer.invoke(`${this.nameAPI}.${channel}`, message)
+            .then(data => {
+              if (data.error) {
+                return Promise.reject(data.payload);
+              } else {
+                return Promise.resolve(data.payload);
+              }
+            });
         } else {
           console.log(`[Error] Invalid invoke channel name: ${channel}`);
+          return Promise.reject(`Invalid invoke channel name: ${channel}`);
         }
       },
     }

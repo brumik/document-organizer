@@ -1,17 +1,38 @@
 import React, { FC, useEffect, useState } from "react";
-import { Button, ButtonVariant, Card, CardBody, CardTitle, Form, FormGroup, Grid, GridItem, TextArea, TextInput } from "@patternfly/react-core";
+import { 
+  Button,
+  ButtonVariant,
+  Card,
+  CardBody,
+  CardTitle,
+  Form,
+  FormGroup,
+  Grid,
+  GridItem,
+  TextArea,
+  TextInput
+} from "@patternfly/react-core";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addNewProject, updateProject } from "../../store/database";
+import { useAppSelector } from "../../store/hooks";
 import { Project } from "../../types";
 import uniqueSlugHelper from "../../Utilities/uniqueSlugHelper";
+import {
+  useApi,
+  useApiNotifications,
+  addNewProject,
+  updateProject,
+} from '../../api';
 
 const ProjectForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const editedProject = useAppSelector(state => state.database.projects.find(p => p.slug === slug));
+
+  const { request: addApi, ...restAddProject } = useApi(addNewProject, null);
+  useApiNotifications({ api: restAddProject, key: 'addProject' });
+  const { request: updateApi, ...restUpdateProject } = useApi(updateProject, null);
+  useApiNotifications({ api: restUpdateProject, key: 'updateProject' });
 
   const [form, setForm] = useState<Project>({
     slug: '',
@@ -32,13 +53,23 @@ const ProjectForm: FC<Record<string, never>> = () => {
     }
   }, [slug]);
 
-  const onSave = () => {
-    if (slug)
-      dispatch(updateProject(slug, form));
-    else
-      dispatch(addNewProject(form));
+  useEffect(() => {
+    if (
+      restAddProject.isSuccess ||
+      restUpdateProject.isSuccess
+    )
+      navigate(`/project/${form.slug}`);
+  }, [restAddProject, restUpdateProject]);
 
-    navigate(`/project/${form.slug}`);
+  const onSave = async () => {
+    if (slug) {
+      updateApi({
+        oldSlug: slug,
+        project: form
+      });
+    } else {
+      addApi({ project: form });
+    }
   };
 
   const onCancel = () => {

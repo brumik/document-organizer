@@ -10,16 +10,6 @@ export const sync = (state: State): ActionTypes => ({
   payload: state
 });
 
-export const addNewProject = (project: Project): ActionTypes => ({
-  type: Action.addNewProject,
-  payload: { project }
-});
-
-export const updateProject = (oldSlug: string, project: Project): ActionTypes => ({
-  type: Action.updateProject,
-  payload: { oldSlug, project }
-});
-
 export const deleteProject = (slug: string): ActionTypes => ({
   type: Action.deleteProject,
   payload: { slug }

@@ -10,8 +10,6 @@ export interface State {
 
 export enum Action {
   sync = 'DATABASE_sync',
-  addNewProject = 'DATABASE_addNewProject',
-  updateProject = 'DATABASE_updateProject',
   deleteProject = 'DATABASE_deleteProject',
   openProject = 'DATABASE_openProject',
   addNewDocument = 'DATABASE_addNewDocument',
@@ -27,21 +25,6 @@ export enum Action {
 interface SyncAction {
   type: Action.sync;
   payload: State;
-}
-
-interface AddNewProjectAction {
-  type: Action.addNewProject;
-  payload: {
-    project: Project;
-  };
-}
-
-interface UpdateProjectAction {
-  type: Action.updateProject;
-  payload: {
-    oldSlug: string;
-    project: Project;
-  };
 }
 
 interface DeleteProjectAction {
@@ -102,8 +85,6 @@ interface ImportDatabaseAction {
 
 export type ActionTypes =
   | SyncAction
-  | AddNewProjectAction
-  | UpdateProjectAction
   | DeleteProjectAction
   | OpenProjectAction
   | AddNewDocumentAction

@@ -15,3 +15,5 @@ export interface DatabaseType {
   projects: Record<string, Project>;
   documents: Record<string, Document>;
 }
+
+export type PromiseErrorFormat = string;

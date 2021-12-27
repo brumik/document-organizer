@@ -6,7 +6,7 @@ import { BrowserWindow, dialog } from "electron";
 const nameAPI = "settings";
 const send = namespacedSend(nameAPI);
 
-const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: never) => {
+const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: Record<string, never>) => {
   send(mainWindow, "getAll", global.preferencesStore.all);
 }
 

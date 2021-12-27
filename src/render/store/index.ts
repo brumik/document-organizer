@@ -1,11 +1,13 @@
 import { combineReducers, createStore } from 'redux';
-import settingsReducer from './settings';
-import databaseReducer from './database';
+import settings from './settings';
+import database from './database';
+import notifications from './notifications';
 export * from './hooks';
 
 export const rootReducer = combineReducers({
-  settings: settingsReducer,
-  database: databaseReducer,
+  settings,
+  database,
+  notifications,
 });
 
 const store = createStore(rootReducer);
