@@ -1,5 +1,8 @@
+import { AlertVariant } from '@patternfly/react-core';
 import { useEffect, useRef, useState } from 'react';
 import { reloadAll } from '.';
+import { useAppDispatch } from '../store';
+import { addNotification, removeNotification } from '../store/notifications';
 import { PromiseErrorFormat } from '../types';
 
 const useIsMounted = (): React.RefObject<unknown> => {
@@ -28,7 +31,7 @@ interface UseRequestReturn<A, T> extends UseRequestVariables<T> {
 const useApi = <A, T>(
   makeRequest: (arg: A) => Promise<T>,
   initialValue: T,
-  reload = true
+  reload = true,
 ): UseRequestReturn<A, T> => {
   const [variables, setVariables] = useState<UseRequestVariables<T>>({
     result: initialValue,
@@ -37,6 +40,9 @@ const useApi = <A, T>(
     isSuccess: false,
   });
   const isMounted = useIsMounted();
+  const dispatch = useAppDispatch();
+  const loadingKey = `loading`;
+  const errorKey = `error`;
 
   return {
     ...variables,
@@ -46,6 +52,15 @@ const useApi = <A, T>(
         isSuccess: false,
         isLoading: true,
       });
+
+      // Start loading notification
+      dispatch(addNotification({
+        key: loadingKey,
+        title: 'Loading...',
+        dismissable: false,
+        variant: AlertVariant.info
+      }));
+      
       try {
         const response = await makeRequest(arg);
 
@@ -58,6 +73,7 @@ const useApi = <A, T>(
           });
         }
 
+        // If not disable ask backend for a db refresh
         if (reload)
           reloadAll();
 
@@ -69,8 +85,18 @@ const useApi = <A, T>(
             error: error as string,
             result: initialValue,
           });
+
+          // Error notificaiton
+          dispatch(addNotification({
+            key: errorKey,
+            title: 'Error',
+            description: error as string,
+            variant: AlertVariant.danger
+          }));
         }
       }
+      // Finnaly
+      dispatch(removeNotification(loadingKey));
     },
     setValue: (value: T) => setVariables({ ...variables, result: value }),
   };

@@ -15,18 +15,30 @@ import {
   TextInput
 } from "@patternfly/react-core";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { addNewDocument, selectDocumentToUpload, updateDocument } from "../../store/database";
+import { useAppSelector } from "../../store";
 import { Document } from "../../types";
 import uniqueSlugHelper from "../../Utilities/uniqueSlugHelper";
+import {
+  useApi,
+  addNewDocument,
+  updateDocument,
+  selectDocumentToUpload
+} from '../../api';
 
 const DocumentForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const editedDoc = useAppSelector(state => state.database.documents.find(d => d.slug === slug));
-  const selectedPath = useAppSelector(state => state.database?.meta?.selectedPath ?? '');
+
+  const { request: addApi, isSuccess: addSuccess } = useApi(addNewDocument, null);
+  const { request: updateApi, isSuccess: updateSuccess } = useApi(updateDocument, null);
+
+  const {
+    request: getDocumentPath,
+    result: selectedPath,
+  } = useApi(selectDocumentToUpload, '');
+
   const projectDropdownOptions = useAppSelector(state => 
     state.database.projects
       .map(({ slug, title }) => ({ value: slug, label: title }))
@@ -70,14 +82,23 @@ const DocumentForm: FC<Record<string, never>> = () => {
     }));
   };
 
+  useEffect(() => {
+    if (addSuccess || updateSuccess)
+      navigate(`/document/${form.slug}`);
+  }, [addSuccess, updateSuccess]);
+
   const onSave = () => {
     if (slug)
-      dispatch(updateDocument(slug, form));
+      updateApi({ 
+        oldSlug: slug,
+        document: form
+      });
     else
-      dispatch(addNewDocument(form, selectedPath));
-
-    navigate(`/document/${form.slug}`);
-  };
+      addApi({
+        originFile: selectedPath, 
+        document: form
+      });
+  }
 
   const onCancel = () => {
     navigate('/document')
@@ -142,7 +163,7 @@ const DocumentForm: FC<Record<string, never>> = () => {
                     />
                     <Button
                       variant={ButtonVariant.primary}
-                      onClick={() => dispatch(selectDocumentToUpload())}
+                      onClick={() => getDocumentPath({})}
                     >
                       Select a document
                     </Button>

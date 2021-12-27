@@ -12,11 +12,15 @@ import {
   DropdownPosition,
   KebabToggle
 } from "@patternfly/react-core";
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from '../../../store/hooks';
 import { Link, useNavigate } from "react-router-dom";
 import DeleteConfirmModal from "../../../Utilities/DeleteConfirmModal";
-import { deleteDocument, openDocument } from "../../../store/database";
 import SimpleLink from "../../../Utilities/SimpleLink";
+import {
+  useApi,
+  deleteDocument,
+  openDocument,
+} from '../../../api';
 
 interface Props {
   slug: string;
@@ -25,10 +29,12 @@ interface Props {
 const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { title } = useAppSelector(state => state.database.documents.find(d => d.slug === slug)) ?? {
     title: ''
   };
+
+  const { request: deleteApi } = useApi(deleteDocument, null);
+  const { request: openApi } = useApi(openDocument, null);
 
   const kebabDropDownItems = [
     <DropdownItem
@@ -41,8 +47,7 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
       key="delete"
       name={title}
       deleteAction={() => {
-        dispatch(deleteDocument(slug));
-        navigate(`/document`)
+        deleteApi({ slug });
       }}
     >
       <DropdownItem style={{ color: 'red' }}>
@@ -80,7 +85,7 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
         <p>Static desc.</p>
       </CardBody>
       <CardFooter>
-        <SimpleLink onClick={() => dispatch(openDocument(slug))}>Show file</SimpleLink>
+        <SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink>
       </CardFooter>
     </Card>
   );

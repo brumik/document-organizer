@@ -61,7 +61,7 @@ class DocumentStore extends BaseStore<Document> {
     }
 
     try {
-      await promises.rmdir(this.getPath(slug));
+      await promises.unlink(this.getPath(slug));
       this.updateData(this.data.filter(p => p.slug !== slug));
 
       return;

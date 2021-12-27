@@ -12,11 +12,18 @@ import {
 } from "@patternfly/react-core";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setRootFolder } from "../store/settings";
-import { importDatabase, exportDatabase } from "../store/database";
+import {
+  useApi,
+  importDatabase,
+  exportDatabase
+} from '../api';
 
 const SettingsPage: FC<Record<string, never>> = () => {
   const rootFolder = useAppSelector(state => state.settings.rootFolder);
   const dispatch = useAppDispatch();
+
+  const { request: importApi, ...restImportDatabase } = useApi(importDatabase, null);
+  const { request: exportApi, ...restExportDatabase } = useApi(exportDatabase, null);
 
   return (
     <Card>
@@ -43,11 +50,11 @@ const SettingsPage: FC<Record<string, never>> = () => {
             </InputGroup>
           </FormGroup>
           <FormGroup fieldId="">
-            <Button id="export" onClick={() => dispatch(exportDatabase())}>
+            <Button id="export" onClick={() => exportApi({})}>
               Export database
             </Button>
             {' '}
-            <Button id="import" onClick={() => dispatch(importDatabase())}>
+            <Button id="import" onClick={() => importApi({})}>
               Import database
             </Button>
           </FormGroup>

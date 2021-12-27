@@ -1,19 +1,23 @@
 import React, { FC } from "react";
 import { Button, ButtonVariant, Card, CardBody, CardFooter, CardTitle, Gallery, GalleryItem, Stack, StackItem } from "@patternfly/react-core";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 import { useParams } from "react-router-dom";
 import DocumentListItem from "../Documents/Components/DocumentListItem";
-import { openProject } from "../../store/database";
+import {
+  useApi,
+  openProject,
+} from '../../api';
 
 const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
-  const dispatch = useAppDispatch();
 
   const { title, description } = useAppSelector(state => state.database.projects.find(p => p.slug === slug)) ?? {
     title: "Undefined",
     description: "Undefined",
   };
   const relatedDocuments = useAppSelector(state => state.database.documents.filter(d => d.projectSlug === slug));
+
+  const { request: openApi } = useApi(openProject, null);
 
   return (
     <Stack hasGutter>
@@ -27,7 +31,7 @@ const Show: FC<Record<string, never>> = () => {
             <p>Number of documents: {relatedDocuments.length}</p>
             <Button
               variant={ButtonVariant.secondary}
-              onClick={() => dispatch(openProject(slug))}
+              onClick={() => openApi({ slug })}
             >
               Show in files
             </Button>

@@ -6,7 +6,9 @@ import fs from 'fs';
 import path from 'path';
 
 // Import types
-import { Project, Document } from '../../types';
+import { InvokePayloads as IP } from "../../types";
+
+type InvokeFunction<T> = (mainWindow: BrowserWindow, event: Electron.IpcMainInvokeEvent, message: T) => Promise<HandleChannelReturn>;
 
 const copyDirectory = (source: string, destination: string) => {
   fs.mkdirSync(destination, { recursive: true });
@@ -50,70 +52,92 @@ const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _m
   getAll(mainWindow);
 }
 
-interface AddNewProject { project: Project };
-const addNewProject = (_mainWindow: BrowserWindow, _event: Electron.IpcMainInvokeEvent, message: AddNewProject) => {
+const addNewProject: InvokeFunction<IP.AddNewProject> = (_mainWindow, _event, message) => {
   return promiseResolver(global.projectStore.add(message.project));
 }
 
-interface UpdateProject { oldSlug: string, project: Project };
-const updateProject = async (_mainWindow: BrowserWindow, _event: Electron.IpcMainInvokeEvent, message: UpdateProject) => {
+const updateProject: InvokeFunction<IP.UpdateProject> = (_mainWindow, _event, message) => {
   return promiseResolver(
     global.projectStore.update(message.oldSlug, message.project)
   );
 };
 
-interface DeleteProject { slug: string };
-const deleteProject = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: DeleteProject) => {
-  await global.projectStore.remove(message.slug);
-  getAll(mainWindow);
+const deleteProject: InvokeFunction<IP.DeleteProject> = (_mainWindow, _event, message) => {
+  return promiseResolver(global.projectStore.remove(message.slug));
 };
 
-interface OpenProject { slug: string };
-const openProject = (_mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: OpenProject) => {
-  shell.openPath(global.projectStore.getPath(message.slug))
-    .then(errorStr => {
-      if (errorStr)
-        throw errorStr;
+const openProject: InvokeFunction<IP.OpenProject> = async (_mainWindow, _event, message) => {
+  const errorStr = await shell.openPath(global.projectStore.getPath(message.slug))
+  if (errorStr)
+    return Promise.resolve({
+      error: true,
+      payload: errorStr
+    });
+  else
+    return Promise.resolve({
+      error: false,
+      payload: undefined
     });
 }
 
-const selectDocumentToUpload = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: string) => {
-  const rootPath = dialog.showOpenDialogSync(mainWindow, {
-    title: 'Select a document',
-    properties: ['openFile'],
-  });
+const selectDocumentToUpload: InvokeFunction<IP.SelectDocumentToUpload> = async (mainWindow, _event, _message) => {
+  try {
+    const rootPath = dialog.showOpenDialogSync(mainWindow, {
+      title: 'Select a document',
+      properties: ['openFile'],
+    });
 
-  send(mainWindow, "selectDocumentToUploadResponse", rootPath ? rootPath[0] : '');
+    if (rootPath && rootPath.length > 0)
+      return {
+        error: false,
+        payload: rootPath[0]
+      }
+    else
+      return {
+        error: true,
+        payload: 'File select cancelled.'
+      }
+  } catch (e) {
+    return {
+      error: true,
+      payload: e as string
+    }
+  }
 }
 
-interface AddNewDocument { originFile: string, document: Document };
-const addNewDocument = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: AddNewDocument) => {
-  await global.documentStore.add(message.document, message.originFile);
-  getAll(mainWindow);
+const addNewDocument: InvokeFunction<IP.AddNewDocument> = (_mainWindow, _event, message) => {
+  return promiseResolver(
+    global.documentStore.add(message.document, message.originFile)
+  );
 }
 
-interface UpdateDocument { oldSlug: string, document: Document };
-const updateDocument = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: UpdateDocument) => {
-  await global.documentStore.update(message.oldSlug, message.document);
-  getAll(mainWindow);
+const updateDocument: InvokeFunction<IP.UpdateDocument> = (_mainWindow, _event, message) => {
+  return promiseResolver(
+    global.documentStore.update(message.oldSlug, message.document)
+  );
 }
 
-interface DeleteDocument { slug: string };
-const deleteDocument = async (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: DeleteDocument) => {
-  await global.documentStore.remove(message.slug);
-  getAll(mainWindow);
+const deleteDocument: InvokeFunction<IP.DeleteDocument> = (_mainWindow, _event, message) => {
+  return promiseResolver(
+    global.documentStore.remove(message.slug)
+  );
 }
 
-interface OpenDocument { slug: string };
-const openDocument = (_mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: OpenDocument) => {
-  shell.openPath(global.documentStore.getPath(message.slug))
-    .then(errorStr => {
-      if (errorStr)
-        throw errorStr;
+const openDocument: InvokeFunction<IP.OpenDocument> = async (_mainWindow, _event, message) => {
+  const errorStr = await shell.openPath(global.documentStore.getPath(message.slug));
+  if (errorStr)
+    return Promise.resolve({
+      error: true,
+      payload: errorStr
+    });
+  else
+    return Promise.resolve({
+      error: false,
+      payload: undefined
     });
 };
 
-const exportDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: string) => {
+const exportDatabase: InvokeFunction<IP.ExportDatabase> = (mainWindow, _event, _message) => {
   const rootPath = dialog.showOpenDialogSync(mainWindow, {
     title: 'Export database',
     defaultPath: global.preferencesStore.rootFolder,
@@ -121,52 +145,78 @@ const exportDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent
   });
 
   if (rootPath) {
-    copyDirectory(global.preferencesStore.rootFolder, rootPath[0]);
+    try {
+      copyDirectory(global.preferencesStore.rootFolder, rootPath[0]);
+      return Promise.resolve({
+        error: false,
+        payload: undefined
+      })
+    } catch(e){
+      return Promise.resolve({
+        error: true,
+        payload: e as string
+      });
+    }
+  } else {
+    return Promise.resolve({
+      error: true,
+      payload: 'Export cancelled.'
+    });
   }
 };
 
-const importDatabase = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: string) => {
+const importDatabase: InvokeFunction<IP.ImportDatabase> = (mainWindow, _event, _message): Promise<HandleChannelReturn> => {
   const rootPath = dialog.showOpenDialogSync(mainWindow, {
     title: 'Import database',
     properties: ['openDirectory'],
   });
 
   if (rootPath) {
-    fs.rmdirSync(global.preferencesStore.rootFolder, { recursive: true });
-    copyDirectory(rootPath[0], global.preferencesStore.rootFolder);
+    try {
+      fs.rmdirSync(global.preferencesStore.rootFolder, { recursive: true });
+      copyDirectory(rootPath[0], global.preferencesStore.rootFolder);
+
+      global.projectStore.reloadFromDisk();
+      getAll(mainWindow);
+      
+      return Promise.resolve({
+        error: false,
+        payload: undefined
+      })
+    } catch (e) {
+      return Promise.resolve({
+        error: true,
+        payload: e as string
+      });
+    }
+  } else {
+    return Promise.resolve({
+      error: true,
+      payload: 'Export cancelled.'
+    });
   }
-
-  global.projectStore.reloadFromDisk();
-  getAll(mainWindow);
 };
-
-// to Main
-const validSendChannel: SendChannels = {
-  requestAll,
-  deleteProject,
-  openProject,
-  selectDocumentToUpload,
-  addNewDocument,
-  updateDocument,
-  deleteDocument,
-  exportDatabase,
-  importDatabase,
-  openDocument
-};
-
-// from Main
-const validReceiveChannel: string[] = [
-  "getAll",
-  "selectDocumentToUploadResponse",
-];
 
 const database = new IPC({
   nameAPI,
-  validSendChannel,
-  validReceiveChannel,
+  validSendChannel: {
+    requestAll
+  },
+  validReceiveChannel: [
+    "getAll",
+  ],
   validHandleChannel: {
     addNewProject,
     updateProject,
+    deleteProject,
+    openProject,
+    selectDocumentToUpload,
+    addNewDocument,
+    updateDocument,
+    deleteDocument,
+    openDocument,
+    exportDatabase,
+    importDatabase,
   },
 });
 

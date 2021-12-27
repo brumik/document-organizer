@@ -18,7 +18,6 @@ import { Project } from "../../types";
 import uniqueSlugHelper from "../../Utilities/uniqueSlugHelper";
 import {
   useApi,
-  useApiNotifications,
   addNewProject,
   updateProject,
 } from '../../api';
@@ -30,9 +29,7 @@ const ProjectForm: FC<Record<string, never>> = () => {
   const editedProject = useAppSelector(state => state.database.projects.find(p => p.slug === slug));
 
   const { request: addApi, ...restAddProject } = useApi(addNewProject, null);
-  useApiNotifications({ api: restAddProject, key: 'addProject' });
   const { request: updateApi, ...restUpdateProject } = useApi(updateProject, null);
-  useApiNotifications({ api: restUpdateProject, key: 'updateProject' });
 
   const [form, setForm] = useState<Project>({
     slug: '',
@@ -61,7 +58,7 @@ const ProjectForm: FC<Record<string, never>> = () => {
       navigate(`/project/${form.slug}`);
   }, [restAddProject, restUpdateProject]);
 
-  const onSave = async () => {
+  const onSave = () => {
     if (slug) {
       updateApi({
         oldSlug: slug,

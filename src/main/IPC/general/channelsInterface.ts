@@ -6,7 +6,7 @@ export type HandleChannelReturn = {
   payload: PromiseErrorFormat;
 } | {
   error: false;
-  payload: undefined;
+  payload: undefined | string;
 }
 
 type HandleChannelFunction = (

@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import SettingsPage from "./Pages/Settings";
 import { sync as settingsSync } from "./store/settings";
-import { selectDocumentToUploadResponse, sync as databaseSync } from "./store/database";
+import { sync as databaseSync } from "./store/database";
 import { useAppDispatch } from "./store/hooks";
 import {
   List as ProjList,
@@ -25,6 +25,7 @@ import {
 } from "./Pages/Documents";
 import NavigationButtons from "./Utilities/NavigationButtons";
 import PageHeaderToolbar from "./Utilities/PageHeaderToolbar";
+import { reloadAll } from "./api";
 
 const App: FC<Record<string, never>> = () => {
   const dispatch = useAppDispatch();
@@ -36,12 +37,9 @@ const App: FC<Record<string, never>> = () => {
       dispatch(settingsSync(data));
     });
     // Initialize and keep up to date the database db
-    window.api.database.send('requestAll');
+    reloadAll();
     window.api.database.receive('getAll', (data) => {
       dispatch(databaseSync(data));
-    });
-    window.api.database.receive('selectDocumentToUploadResponse', (data) => {
-      dispatch(selectDocumentToUploadResponse(data));
     });
   }, []);
 

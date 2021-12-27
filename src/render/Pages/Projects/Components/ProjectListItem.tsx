@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { 
   Card,
   CardActions,
@@ -12,10 +12,13 @@ import {
   DropdownPosition,
   KebabToggle
 } from "@patternfly/react-core";
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from '../../../store/hooks';
 import { Link, useNavigate } from "react-router-dom";
 import DeleteConfirmModal from "../../../Utilities/DeleteConfirmModal";
-import { deleteProject } from "../../../store/database";
+import {
+  useApi,
+  deleteProject,
+} from '../../../api';
 
 interface Props {
   slug: string;
@@ -24,16 +27,17 @@ interface Props {
 const ProjectListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   const { title, description } = useAppSelector(state => state.database.projects.find(p => p.slug === slug)) ?? {
     title: "Undefined",
     description: "Undefined",
   };
-  const relatedDocuments = useAppSelector(state =>
-    Object.entries(state.database.documents)
-      .filter(([,doc]) => doc.projectSlug === slug));
 
+  const relatedDocuments = useAppSelector(state =>
+    state.database.documents.map((doc) => doc.projectSlug === slug));
+
+  const { request: deleteApi } = useApi(deleteProject, null);
+  
   const kebabDropDownItems = [
     <DropdownItem
       key="edit"
@@ -45,8 +49,7 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
       key="delete"
       name={title}
       deleteAction={() => { 
-        dispatch(deleteProject(slug));
-        navigate(`/project`)
+        deleteApi({ slug });
       }}
     >
         <DropdownItem style={{ color: 'red' }}>

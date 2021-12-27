@@ -1,14 +1,16 @@
 import React, { FC } from "react";
 import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { openDocument } from "../../store/database";
 import SimpleLink from '../../Utilities/SimpleLink';
+import {
+  useApi,
+  openDocument,
+} from '../../api';
 
 const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
-  const dispatch = useAppDispatch();
   const { title, projectSlug } = useAppSelector(state => state.database.documents.find(p => p.slug === slug)) ?? {
     title: "Undefined",
     projectSlug: '',
@@ -19,6 +21,8 @@ const Show: FC<Record<string, never>> = () => {
     description: "Undefined",
   };
 
+  const { request: openApi } = useApi(openDocument, null);
+
   return (
     <Card>
       <CardTitle>{title}</CardTitle>
@@ -27,7 +31,7 @@ const Show: FC<Record<string, never>> = () => {
       </CardBody>
       <CardFooter>
         <p>Project: <Link to={`/project/${projectSlug}`}>{project.title}</Link></p>
-        <SimpleLink onClick={() => dispatch(openDocument(slug))}>Show file</SimpleLink>
+        <SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink>
       </CardFooter>
     </Card>
   );

@@ -57,6 +57,7 @@ export default class IPC {
           console.log(`[Log] Invoke channel active: ${channel}`, message);
           return ipcRenderer.invoke(`${this.nameAPI}.${channel}`, message)
             .then(data => {
+              console.log('data', data);
               if (data.error) {
                 return Promise.reject(data.payload);
               } else {

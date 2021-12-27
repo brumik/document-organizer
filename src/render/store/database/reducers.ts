@@ -16,17 +16,7 @@ const reducer = (
   switch (action.type) {
     case Action.sync:
       return action.payload;
-    case Action.selectDocumentToUploadResponse:
-      return {
-        ...state,
-        meta: {
-          ...state.meta,
-          selectedPath: action.payload
-      }
-    };
     default:
-      const actionName = action.type.split('_')[1];
-      window.api.database.send(actionName, action.payload);
       return state;
   }
 }
