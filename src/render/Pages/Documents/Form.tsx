@@ -177,11 +177,6 @@ const DocumentForm: FC<Record<string, never>> = () => {
                   onChange={projectDropdownOnChange}
                   aria-label="FormSelect Input"
                 >
-                  <FormSelectOption
-                    key={'default'}
-                    value={'./'}
-                    label={'No project'}
-                  />
                   {projectDropdownOptions.map((option) => (
                     <FormSelectOption
                       key={option.value}
