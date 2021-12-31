@@ -1,4 +1,5 @@
 import Store from "./store";
+import fs from "fs";
 
 interface Props {
   rootFolder?: string;
@@ -23,6 +24,10 @@ class RestApiBase<T extends Database> extends Store<T[]> {
 
   public getItem(slug: string): T | undefined {
     return this.data.find(item => item.slug === slug);
+  }
+
+  protected existsOnDisk(slug: string): boolean {
+    return fs.existsSync(this.getPath(slug));
   }
 
   public exists(slug: string) {

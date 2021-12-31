@@ -19,11 +19,13 @@ export interface DatabaseType {
 export type PromiseErrorFormat = string;
 
 export namespace InvokePayloads {
+  export type ProjectHealthCheck = Record<string, never>;
   export interface AddNewProject { project: Project };
   export interface UpdateProject { oldSlug: string; project: Project };
   export interface DeleteProject { slug: string };
   export interface OpenProject { slug: string };
   export type SelectDocumentToUpload = Record<string, never>;
+  export type DocumentHealthCheck = Record<string, never>;
   export interface AddNewDocument { originFile: string; document: Document };
   export interface UpdateDocument { oldSlug: string; document: Document };
   export interface DeleteDocument { slug: string };

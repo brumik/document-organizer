@@ -31,6 +31,7 @@ interface UseRequestReturn<A, T> extends UseRequestVariables<T> {
 const useApi = <A, T>(
   makeRequest: (arg: A) => Promise<T>,
   initialValue: T,
+  notificationKey = Date.now().toString(),
   reload = true,
 ): UseRequestReturn<A, T> => {
   const [variables, setVariables] = useState<UseRequestVariables<T>>({
@@ -41,8 +42,8 @@ const useApi = <A, T>(
   });
   const isMounted = useIsMounted();
   const dispatch = useAppDispatch();
-  const loadingKey = `loading`;
-  const errorKey = `error`;
+  const loadingKey = `${notificationKey}-loading`;
+  const errorKey = `${notificationKey}-error`;
 
   return {
     ...variables,

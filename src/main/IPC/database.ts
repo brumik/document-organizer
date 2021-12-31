@@ -52,6 +52,10 @@ const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _m
   getAll(mainWindow);
 }
 
+const projectHealthCheck: InvokeFunction<IP.ProjectHealthCheck> = async (_mainWindow, _event, _message) => {
+  return promiseResolver(global.projectStore.healthCheck());
+}
+
 const addNewProject: InvokeFunction<IP.AddNewProject> = (_mainWindow, _event, message) => {
   return promiseResolver(global.projectStore.add(message.project));
 }
@@ -103,6 +107,10 @@ const selectDocumentToUpload: InvokeFunction<IP.SelectDocumentToUpload> = async 
       payload: e as string
     }
   }
+}
+
+const documentHealthCheck: InvokeFunction<IP.DocumentHealthCheck> = async (_mainWindow, _event, _message) => {
+  return promiseResolver(global.documentStore.healthCheck());
 }
 
 const addNewDocument: InvokeFunction<IP.AddNewDocument> = (_mainWindow, _event, message) => {
@@ -206,11 +214,13 @@ const database = new IPC({
     "getAll",
   ],
   validHandleChannel: {
+    projectHealthCheck,
     addNewProject,
     updateProject,
     deleteProject,
     openProject,
     selectDocumentToUpload,
+    documentHealthCheck,
     addNewDocument,
     updateDocument,
     deleteDocument,

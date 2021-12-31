@@ -4,6 +4,9 @@ export const reloadAll = (): void => {
   window.api.database.send('requestAll');
 };
 
+export const projectHealthCheck = (args: IP.ProjectHealthCheck) =>
+  window.api.database.invoke('projectHealthCheck', args);
+
 export const addNewProject = (args: IP.AddNewProject) => 
   window.api.database.invoke('addNewProject', args);
 
@@ -18,6 +21,9 @@ export const openProject = (args: IP.OpenProject) =>
 
 export const selectDocumentToUpload = (args: IP.SelectDocumentToUpload) => 
   window.api.database.invoke('selectDocumentToUpload', args);
+
+export const documentHealthCheck = (args: IP.DocumentHealthCheck) =>
+  window.api.database.invoke('documentHealthCheck', args);
 
 export const addNewDocument = (args: IP.AddNewDocument) => 
   window.api.database.invoke('addNewDocument', args);

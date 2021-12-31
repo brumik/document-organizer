@@ -25,22 +25,30 @@ import {
 } from "./Pages/Documents";
 import NavigationButtons from "./Utilities/NavigationButtons";
 import PageHeaderToolbar from "./Utilities/PageHeaderToolbar";
-import { reloadAll } from "./api";
+import {
+  useApi,
+  documentHealthCheck,
+  projectHealthCheck,
+  reloadAll
+} from "./api";
 
 const App: FC<Record<string, never>> = () => {
   const dispatch = useAppDispatch();
 
+  const docHealthCheck = useApi(documentHealthCheck, null, 'docHealthCheck', false);
+  const projHealthCheck = useApi(projectHealthCheck, null, 'projHealthCheck', false);
+
   useEffect(() => {
-    // Initialize and keep up to date the settings db
-    window.api.settings.send('requestAll');
-    window.api.settings.receive('getAll', (data) => {
-      dispatch(settingsSync(data));
-    });
-    // Initialize and keep up to date the database db
-    reloadAll();
     window.api.database.receive('getAll', (data) => {
       dispatch(databaseSync(data));
     });
+    window.api.settings.receive('getAll', (data) => {
+      dispatch(settingsSync(data));
+    });
+    reloadAll();
+    window.api.settings.send('requestAll');
+    docHealthCheck.request({});
+    projHealthCheck.request({});
   }, []);
 
   const Header = (

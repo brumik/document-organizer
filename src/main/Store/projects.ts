@@ -21,7 +21,7 @@ class ProjectStore extends BaseStore<Project> {
       await promises.mkdir(this.getPath(slug));
       this.updateData([...this.data, { slug, ...project }]);
 
-      return;
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);
     }
@@ -41,7 +41,7 @@ class ProjectStore extends BaseStore<Project> {
         this.data.map(p => p.slug === oldSlug ? { ...project } : p)
       );
 
-      return;
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);
     }
@@ -56,10 +56,22 @@ class ProjectStore extends BaseStore<Project> {
       await promises.rmdir(this.getPath(slug));
       this.updateData(this.data.filter(p => p.slug !== slug));
 
-      return;
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);
     }
+  }
+
+  public async healthCheck(): Promise<void> {
+    const missing = this.data.map(({ slug }) => 
+      !this.existsOnDisk(slug) ? slug : undefined
+    ).filter(p => p !== undefined);
+
+    if (missing.length > 0) {
+      return Promise.reject(`Projects missing: ${missing.join(', ')}`);
+    }
+
+    return Promise.resolve();
   }
 }
 

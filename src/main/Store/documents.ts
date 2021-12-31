@@ -29,7 +29,7 @@ class DocumentStore extends BaseStore<Document> {
       await promises.copyFile(originFile, this.getPath(document));
       this.updateData([...this.data, document]);
 
-      return;
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);
     }
@@ -49,7 +49,7 @@ class DocumentStore extends BaseStore<Document> {
         this.data.map(p => p.slug === oldSlug ? { ...document } : p)
       );
 
-      return;
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);
     }
@@ -64,10 +64,22 @@ class DocumentStore extends BaseStore<Document> {
       await promises.unlink(this.getPath(slug));
       this.updateData(this.data.filter(p => p.slug !== slug));
 
-      return;
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);
     }
+  }
+
+  public async healthCheck(): Promise<void> {
+    const missing = this.data.map(({ slug }) =>
+      !this.existsOnDisk(slug) ? slug : undefined
+    ).filter(p => p !== undefined);
+
+    if (missing.length > 0) {
+      return Promise.reject(`Documents missing: ${missing.join(', ')}`);
+    }
+
+    return Promise.resolve();
   }
 }
 
