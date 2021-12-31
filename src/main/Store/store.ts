@@ -25,6 +25,12 @@ class Store<T> {
     this.configName = params.configName + '.json';
     this.basePath = params.rootFolder ?? electron.app.getPath('userData');
     this.path = path.join(this.basePath, this.configName);
+
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(this.basePath)) {
+      fs.mkdirSync(this.basePath, { recursive: true });
+    }
+
     this.data = parseDataFile(this.path, params.defaults);
   }
 
@@ -39,7 +45,7 @@ class Store<T> {
   }
 
   public move(to: string) {
-    const newPath = path.join(to, this.configName + '.json');
+    const newPath = path.join(to, this.configName);
     fs.promises.access(this.path).then(() => {
       fs.promises.rename(this.path, newPath).then(() => {
         this.movePath(newPath);

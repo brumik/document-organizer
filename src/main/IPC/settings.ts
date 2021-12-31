@@ -2,6 +2,7 @@ import { SendChannels } from "./general/channelsInterface";
 import IPC from "./general/icp";
 import namespacedSend from "./general/sendHelper";
 import { BrowserWindow, dialog } from "electron";
+import copyDirectory from "./copyDirectory";
 
 const nameAPI = "settings";
 const send = namespacedSend(nameAPI);
@@ -17,9 +18,10 @@ const setRootFolder = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent,
   });
 
   if (rootPath) {
-    global.preferencesStore.rootFolder = rootPath[0];
     global.projectStore.move(rootPath[0]);
     global.documentStore.move(rootPath[0]);
+    copyDirectory(global.preferencesStore.rootFolder, rootPath[0]);
+    global.preferencesStore.rootFolder = rootPath[0];
   }
 
   send(mainWindow, "getAll", global.preferencesStore.all);

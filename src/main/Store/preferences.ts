@@ -1,5 +1,6 @@
 import electron from "electron";
 import Store from "./store";
+import path from 'path';
 
 interface Props {
   configName: string;
@@ -16,7 +17,7 @@ class PreferencesStore extends Store<Database> {
       configName,
       rootFolder: electron.app.getPath('userData'),
       defaults: {
-        rootFolder: electron.app.getPath('userData'),
+        rootFolder: path.join(electron.app.getPath('userData'), 'user-database'),
         windowBounds: {
           x: 0,
           y: 0,

@@ -1,4 +1,3 @@
-import Store from './main/Store/store';
 import Main from './main/mainWindow';
 import { app, ipcMain } from 'electron';
 import settings from './main/IPC/settings';

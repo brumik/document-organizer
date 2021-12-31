@@ -1,27 +1,13 @@
-import { HandleChannelReturn, SendChannels } from "./general/channelsInterface";
+import { HandleChannelReturn } from "./general/channelsInterface";
 import IPC from "./general/icp";
 import { BrowserWindow, dialog, shell } from "electron";
 import namespacedSend from "./general/sendHelper";
-import fs from 'fs';
-import path from 'path';
+import copyDirectory from './copyDirectory'
 
 // Import types
 import { InvokePayloads as IP } from "../../types";
 
 type InvokeFunction<T> = (mainWindow: BrowserWindow, event: Electron.IpcMainInvokeEvent, message: T) => Promise<HandleChannelReturn>;
-
-const copyDirectory = (source: string, destination: string) => {
-  fs.mkdirSync(destination, { recursive: true });
-
-  fs.readdirSync(source, { withFileTypes: true }).forEach((entry) => {
-    let sourcePath = path.join(source, entry.name);
-    let destinationPath = path.join(destination, entry.name);
-
-    entry.isDirectory()
-      ? copyDirectory(sourcePath, destinationPath)
-      : fs.copyFileSync(sourcePath, destinationPath);
-  });
-}
 
 const promiseResolver = async (fnc: Promise<void>): Promise<HandleChannelReturn> => {
   try {
@@ -181,7 +167,8 @@ const importDatabase: InvokeFunction<IP.ImportDatabase> = (mainWindow, _event, _
 
   if (rootPath) {
     try {
-      fs.rmdirSync(global.preferencesStore.rootFolder, { recursive: true });
+      // We don't want to delete everything in that folder.
+      // fs.rmSync(global.preferencesStore.rootFolder, { recursive: true });
       copyDirectory(rootPath[0], global.preferencesStore.rootFolder);
 
       global.projectStore.reloadFromDisk();
