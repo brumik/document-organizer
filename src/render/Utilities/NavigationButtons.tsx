@@ -10,8 +10,16 @@ const NavigationButtons: FC<Record<string, never>> = () => {
 
   return (
     <>
-      <Button variant={ButtonVariant.plain} onClick={() => navigate(-1)}><AngleLeftIcon size={IconSize.lg} /></Button>
-      <Button variant={ButtonVariant.plain} onClick={() => navigate(1)}><AngleRightIcon size={IconSize.lg} /></Button>
+      <Button
+        variant={ButtonVariant.plain}
+        onClick={() => navigate(-1)}>
+          <AngleLeftIcon size={IconSize.lg} />
+        </Button>
+      <Button
+        variant={ButtonVariant.plain}
+        onClick={() => navigate(1)}>
+          <AngleRightIcon size={IconSize.lg} />
+        </Button>
     </>
   );
 };

@@ -5,8 +5,8 @@ import ListItem from "./Components/ProjectListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { projectsSelector } from "../../Utilities/stateSelectors";
 
-const List: FC<Record<string, never>> = () => {
-  const keys = useAppSelector(projectsSelector({ isArchived: false })).map(p => p.slug) ?? [];
+const ArchiveList: FC<Record<string, never>> = () => {
+  const keys = useAppSelector(projectsSelector({ isArchived: true })).map(p => p.slug) ?? [];
 
   return (
     <Stack hasGutter>
@@ -39,4 +39,4 @@ const List: FC<Record<string, never>> = () => {
   );
 };
 
-export default List;
+export default ArchiveList;

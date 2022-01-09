@@ -20,7 +20,9 @@ import {
   useApi,
   deleteDocument,
   openDocument,
+  archiveDocument,
 } from '../../../api';
+import { documentSelector } from "../../../Utilities/stateSelectors";
 
 interface Props {
   slug: string;
@@ -29,12 +31,13 @@ interface Props {
 const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { title } = useAppSelector(state => state.database.documents.find(d => d.slug === slug)) ?? {
+  const { title } = useAppSelector(documentSelector(slug)) ?? {
     title: ''
   };
 
   const { request: deleteApi } = useApi(deleteDocument, null);
   const { request: openApi } = useApi(openDocument, null);
+  const { request: archiveApi } = useApi(archiveDocument, null);
 
   const kebabDropDownItems = [
     <DropdownItem
@@ -53,7 +56,13 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
       <DropdownItem style={{ color: 'red' }}>
         Delete
       </DropdownItem>
-    </DeleteConfirmModal>
+    </DeleteConfirmModal>,
+    <DropdownItem
+      key="archive"
+      onClick={() => archiveApi({ slug })}
+    >
+      Archive
+    </DropdownItem>
   ];
 
   return (

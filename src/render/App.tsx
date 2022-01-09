@@ -15,11 +15,13 @@ import { sync as databaseSync } from "./store/database";
 import { useAppDispatch } from "./store/hooks";
 import {
   List as ProjList,
+  ArchiveList as ProjArchiveList,
   Show as ProjShow,
   Form as ProjForm,
 } from "./Pages/Projects";
 import {
   List as DocList,
+  ArchiveList as DocArchiveList,
   Show as DocShow,
   Form as DocForm,
 } from "./Pages/Documents";
@@ -76,10 +78,12 @@ const App: FC<Record<string, never>> = () => {
         <Routes>
           <Route path="/" element={<ProjList />} />
           <Route path="/project" element={<ProjList />} />
+          <Route path="/project/archive" element={<ProjArchiveList />} />
           <Route path="/project/:slug" element={<ProjShow />} />
           <Route path="/project/:slug/edit" element={<ProjForm />} />
           <Route path="/project/new" element={<ProjForm />} />
           <Route path="/document" element={<DocList />} />
+          <Route path="/document/archive" element={<DocArchiveList />} />
           <Route path="/document/:slug" element={<DocShow />} />
           <Route path="/document/:slug/edit" element={<DocForm />} />
           <Route path="/document/new" element={<DocForm />} />

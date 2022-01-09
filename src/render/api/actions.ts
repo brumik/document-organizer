@@ -16,6 +16,9 @@ export const updateProject = (args: IP.UpdateProject) =>
 export const deleteProject = (args: IP.DeleteProject) => 
   window.api.database.invoke('deleteProject', args);
 
+export const archiveProject = (args: IP.ArchiveProject) =>
+  window.api.database.invoke('archiveProject', args);
+
 export const openProject = (args: IP.OpenProject) => 
   window.api.database.invoke('openProject', args);
 
@@ -33,6 +36,9 @@ export const updateDocument = (args: IP.UpdateDocument) =>
 
 export const deleteDocument = (args: IP.DeleteDocument) => 
   window.api.database.invoke('deleteDocument', args);
+
+export const archiveDocument = (args: IP.ArchiveDocument) =>
+  window.api.database.invoke('archiveDocument', args);
 
 export const openDocument = (args: IP.OpenDocument) => 
   window.api.database.invoke('openDocument', args);

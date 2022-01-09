@@ -4,7 +4,7 @@ import BaseStore from "./restApiBase";
 import { Document } from '../../types';
 
 class DocumentStore extends BaseStore<Document> {
-  public getPath(value: string | Document): string {
+  public getPath(value: string | Document, archived = false): string {
     const item = typeof value === 'string'
       ? this.getItem(value)
       : value;
@@ -13,8 +13,13 @@ class DocumentStore extends BaseStore<Document> {
       throw new Error(`The item ${value} does not exists to get the path for.`);
     }
 
+    const base = 
+      archived || item.isArchived
+        ? this.archivePath
+        : this.basePath;
+
     return path.join(
-      this.basePath,
+      base,
       item.projectSlug,
       item.slug + '.' + item.ext
     );
@@ -63,6 +68,26 @@ class DocumentStore extends BaseStore<Document> {
     try {
       await promises.unlink(this.getPath(slug));
       this.updateData(this.data.filter(p => p.slug !== slug));
+
+      return Promise.resolve();
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
+  public async archive(slug: string): Promise<void> {
+    const document = this.getItem(slug);
+    if (!document) {
+      return Promise.reject(`Cannot archive document: ${slug} does not exist.`);
+    }
+
+    this.ensureDirExists(path.join(this.archivePath, document.projectSlug));
+
+    try {
+      await promises.rename(this.getPath(slug), this.getPath(slug, true));
+      this.updateData(
+        this.data.map(p => p.slug === slug ? { ...p, isArchived: true } : p)
+      );
 
       return Promise.resolve();
     } catch (e) {

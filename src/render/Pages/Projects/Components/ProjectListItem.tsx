@@ -18,7 +18,12 @@ import DeleteConfirmModal from "../../../Utilities/DeleteConfirmModal";
 import {
   useApi,
   deleteProject,
+  archiveProject,
 } from '../../../api';
+import {
+  documentsSelector,
+  projectSelector
+} from "../../../Utilities/stateSelectors";
 
 interface Props {
   slug: string;
@@ -28,15 +33,18 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { title, description } = useAppSelector(state => state.database.projects.find(p => p.slug === slug)) ?? {
+  const { title, description } = useAppSelector(projectSelector(slug)) ?? {
     title: "Undefined",
     description: "Undefined",
   };
 
-  const relatedDocuments = useAppSelector(state =>
-    state.database.documents.map((doc) => doc.projectSlug === slug));
+  const relatedDocuments = useAppSelector(
+    documentsSelector({ projectSlug: slug, isArchived: false })
+  );
 
   const { request: deleteApi } = useApi(deleteProject, null);
+  const { request: archiveApi } = useApi(archiveProject, null);
+
   
   const kebabDropDownItems = [
     <DropdownItem
@@ -55,7 +63,13 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
         <DropdownItem style={{ color: 'red' }}>
           Delete
         </DropdownItem>
-    </DeleteConfirmModal>
+    </DeleteConfirmModal>,
+    <DropdownItem
+      key="archive"
+      onClick={() => archiveApi({ slug })}
+    >
+      Archive
+    </DropdownItem>
   ];
 
   return (

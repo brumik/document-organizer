@@ -5,8 +5,8 @@ import ListItem from "./Components/DocumentListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { documentsSelector } from "../../Utilities/stateSelectors";
 
-const List: FC<Record<string, never>> = () => {
-  const keys = useAppSelector(documentsSelector({ isArchived: false })).map(d => d.slug) ?? [];
+const ArchiveList: FC<Record<string, never>> = () => {
+  const keys = useAppSelector(documentsSelector({ isArchived: true })).map(d => d.slug) ?? [];
 
   return (
     <Stack hasGutter>
@@ -30,4 +30,4 @@ const List: FC<Record<string, never>> = () => {
   );
 };
 
-export default List;
+export default ArchiveList;

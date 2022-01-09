@@ -4,12 +4,21 @@ import BaseStore from "./restApiBase";
 import { Project } from '../../types';
 
 class ProjectStore extends BaseStore<Project> {
-  public getPath(value: string | Project): string {
-    if (typeof value === 'string') {
-      return path.join(this.basePath, value);
-    } else {
-      return path.join(this.basePath, value.slug);
+  public getPath(value: string | Project, archived = false): string {
+    const item = typeof value === 'string'
+      ? this.getItem(value)
+      : value;
+
+    if (!item) {
+      throw new Error(`The item ${value} does not exists to get the path for.`);
     }
+
+    const base =
+      archived || item.isArchived
+        ? this.archivePath
+        : this.basePath;
+
+    return path.join(base, item.slug);
   };
 
   public async add({ slug, ...project }: Project): Promise<void> {
@@ -55,6 +64,23 @@ class ProjectStore extends BaseStore<Project> {
     try {
       await promises.rmdir(this.getPath(slug));
       this.updateData(this.data.filter(p => p.slug !== slug));
+
+      return Promise.resolve();
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
+  public async archive(slug: string): Promise<void> {
+    if (!this.exists(slug)) {
+      return Promise.reject(`Cannot archive project: ${slug} does not exist.`);
+    }
+
+    this.ensureDirExists(this.getPath(slug, true));
+
+    try {
+      await promises.rmdir(this.getPath(slug));
+      this.updateData(this.data.map(p => p.slug === slug ? { ...p, isArchived: true } : p));
 
       return Promise.resolve();
     } catch (e) {

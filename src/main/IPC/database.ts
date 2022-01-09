@@ -22,7 +22,7 @@ const promiseResolver = async (fnc: Promise<void>): Promise<HandleChannelReturn>
       payload: error as string
     }
   }
-}
+};
 
 const nameAPI = "database";
 const send = namespacedSend(nameAPI);
@@ -36,15 +36,15 @@ const getAll = (mainWindow: BrowserWindow) => {
 
 const requestAll = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, _message: Record<string, never>) => {
   getAll(mainWindow);
-}
+};
 
 const projectHealthCheck: InvokeFunction<IP.ProjectHealthCheck> = async (_mainWindow, _event, _message) => {
   return promiseResolver(global.projectStore.healthCheck());
-}
+};
 
 const addNewProject: InvokeFunction<IP.AddNewProject> = (_mainWindow, _event, message) => {
   return promiseResolver(global.projectStore.add(message.project));
-}
+};
 
 const updateProject: InvokeFunction<IP.UpdateProject> = (_mainWindow, _event, message) => {
   return promiseResolver(
@@ -54,6 +54,19 @@ const updateProject: InvokeFunction<IP.UpdateProject> = (_mainWindow, _event, me
 
 const deleteProject: InvokeFunction<IP.DeleteProject> = (_mainWindow, _event, message) => {
   return promiseResolver(global.projectStore.remove(message.slug));
+};
+
+const archiveProject: InvokeFunction<IP.ArchiveProject> = (_mainWindow, _event, message) => {
+  const documents = global.documentStore.all.filter(doc => doc.projectSlug === message.slug);
+  try {
+    documents.forEach(doc => global.documentStore.archive(doc.slug));
+    return promiseResolver(global.projectStore.archive(message.slug));
+  } catch (e) {
+    return Promise.resolve({
+      error: true,
+      payload: e as string
+    })
+  }
 };
 
 const openProject: InvokeFunction<IP.OpenProject> = async (_mainWindow, _event, message) => {
@@ -68,7 +81,7 @@ const openProject: InvokeFunction<IP.OpenProject> = async (_mainWindow, _event, 
       error: false,
       payload: undefined
     });
-}
+};
 
 const selectDocumentToUpload: InvokeFunction<IP.SelectDocumentToUpload> = async (mainWindow, _event, _message) => {
   try {
@@ -78,44 +91,50 @@ const selectDocumentToUpload: InvokeFunction<IP.SelectDocumentToUpload> = async 
     });
 
     if (rootPath && rootPath.length > 0)
-      return {
+      return Promise.resolve({
         error: false,
         payload: rootPath[0]
-      }
+      });
     else
-      return {
+      return Promise.resolve({
         error: true,
         payload: 'File select cancelled.'
-      }
+      });
   } catch (e) {
-    return {
+    return Promise.resolve({
       error: true,
       payload: e as string
-    }
+    });
   }
-}
+};
 
 const documentHealthCheck: InvokeFunction<IP.DocumentHealthCheck> = async (_mainWindow, _event, _message) => {
   return promiseResolver(global.documentStore.healthCheck());
-}
+};
 
 const addNewDocument: InvokeFunction<IP.AddNewDocument> = (_mainWindow, _event, message) => {
   return promiseResolver(
     global.documentStore.add(message.document, message.originFile)
   );
-}
+};
 
 const updateDocument: InvokeFunction<IP.UpdateDocument> = (_mainWindow, _event, message) => {
   return promiseResolver(
     global.documentStore.update(message.oldSlug, message.document)
   );
-}
+};
 
 const deleteDocument: InvokeFunction<IP.DeleteDocument> = (_mainWindow, _event, message) => {
   return promiseResolver(
     global.documentStore.remove(message.slug)
   );
-}
+};
+
+const archiveDocument: InvokeFunction<IP.ArchiveDocument> = (_mainWindow, _event, message) => {
+  return promiseResolver(
+    global.documentStore.archive(message.slug)
+  );
+};
 
 const openDocument: InvokeFunction<IP.OpenDocument> = async (_mainWindow, _event, message) => {
   const errorStr = await shell.openPath(global.documentStore.getPath(message.slug));
@@ -205,12 +224,14 @@ const database = new IPC({
     addNewProject,
     updateProject,
     deleteProject,
+    archiveProject,
     openProject,
     selectDocumentToUpload,
     documentHealthCheck,
     addNewDocument,
     updateDocument,
     deleteDocument,
+    archiveDocument,
     openDocument,
     exportDatabase,
     importDatabase,
