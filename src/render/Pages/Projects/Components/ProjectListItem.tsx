@@ -33,13 +33,13 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { title, description } = useAppSelector(projectSelector(slug)) ?? {
-    title: "Undefined",
-    description: "Undefined",
-  };
-
+  const {
+    title = 'Undefined',
+    description = 'Undefined',
+    isArchived = false
+  } = useAppSelector(projectSelector(slug)) ?? {};
   const relatedDocuments = useAppSelector(
-    documentsSelector({ projectSlug: slug, isArchived: false })
+    documentsSelector({ projectSlug: slug, isArchived })
   );
 
   const { request: deleteApi } = useApi(deleteProject, null);
@@ -66,9 +66,9 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
     </DeleteConfirmModal>,
     <DropdownItem
       key="archive"
-      onClick={() => archiveApi({ slug })}
+      onClick={() => archiveApi({ slug, isArchived: !isArchived })}
     >
-      Archive
+      {isArchived ? 'Unarchive' : 'Archive'}
     </DropdownItem>
   ];
 

@@ -4,7 +4,7 @@ import BaseStore from "./restApiBase";
 import { Document } from '../../types';
 
 class DocumentStore extends BaseStore<Document> {
-  public getPath(value: string | Document, archived = false): string {
+  public getPath(value: string | Document, archived?: boolean): string {
     const item = typeof value === 'string'
       ? this.getItem(value)
       : value;
@@ -13,10 +13,12 @@ class DocumentStore extends BaseStore<Document> {
       throw new Error(`The item ${value} does not exists to get the path for.`);
     }
 
-    const base = 
-      archived || item.isArchived
-        ? this.archivePath
-        : this.basePath;
+    let base = this.basePath;
+    if (typeof archived !== 'undefined' && archived) {
+      base = this.archivePath;
+    } else if (typeof archived === 'undefined' && item.isArchived) {
+      base = this.archivePath;
+    }
 
     return path.join(
       base,
@@ -75,18 +77,19 @@ class DocumentStore extends BaseStore<Document> {
     }
   }
 
-  public async archive(slug: string): Promise<void> {
+  public async archive(slug: string, isArchived: boolean): Promise<void> {
     const document = this.getItem(slug);
     if (!document) {
       return Promise.reject(`Cannot archive document: ${slug} does not exist.`);
     }
 
-    this.ensureDirExists(path.join(this.archivePath, document.projectSlug));
+    const futurePath = isArchived ? this.archivePath : this.basePath;
+    this.ensureDirExists(path.join(futurePath, document.projectSlug));
 
     try {
-      await promises.rename(this.getPath(slug), this.getPath(slug, true));
+      await promises.rename(this.getPath(slug), this.getPath(slug, isArchived));
       this.updateData(
-        this.data.map(p => p.slug === slug ? { ...p, isArchived: true } : p)
+        this.data.map(p => p.slug === slug ? { ...p, isArchived } : p)
       );
 
       return Promise.resolve();

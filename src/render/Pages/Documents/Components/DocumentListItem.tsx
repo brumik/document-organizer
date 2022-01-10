@@ -31,9 +31,7 @@ interface Props {
 const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { title } = useAppSelector(documentSelector(slug)) ?? {
-    title: ''
-  };
+  const { title = '', isArchived = false } = useAppSelector(documentSelector(slug)) ?? {};
 
   const { request: deleteApi } = useApi(deleteDocument, null);
   const { request: openApi } = useApi(openDocument, null);
@@ -59,9 +57,9 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
     </DeleteConfirmModal>,
     <DropdownItem
       key="archive"
-      onClick={() => archiveApi({ slug })}
+      onClick={() => archiveApi({ slug, isArchived: !isArchived })}
     >
-      Archive
+      {isArchived ? 'Unarchive' : 'Archive'}
     </DropdownItem>
   ];
 

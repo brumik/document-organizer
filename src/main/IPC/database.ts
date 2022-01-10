@@ -59,8 +59,8 @@ const deleteProject: InvokeFunction<IP.DeleteProject> = (_mainWindow, _event, me
 const archiveProject: InvokeFunction<IP.ArchiveProject> = (_mainWindow, _event, message) => {
   const documents = global.documentStore.all.filter(doc => doc.projectSlug === message.slug);
   try {
-    documents.forEach(doc => global.documentStore.archive(doc.slug));
-    return promiseResolver(global.projectStore.archive(message.slug));
+    documents.forEach(doc => global.documentStore.archive(doc.slug, message.isArchived));
+    return promiseResolver(global.projectStore.archive(message.slug, message.isArchived));
   } catch (e) {
     return Promise.resolve({
       error: true,
@@ -132,7 +132,7 @@ const deleteDocument: InvokeFunction<IP.DeleteDocument> = (_mainWindow, _event, 
 
 const archiveDocument: InvokeFunction<IP.ArchiveDocument> = (_mainWindow, _event, message) => {
   return promiseResolver(
-    global.documentStore.archive(message.slug)
+    global.documentStore.archive(message.slug, message.isArchived)
   );
 };
 

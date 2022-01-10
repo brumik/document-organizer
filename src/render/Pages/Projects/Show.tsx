@@ -7,16 +7,22 @@ import {
   useApi,
   openProject,
 } from '../../api';
+import {
+  documentsSelector,
+  projectSelector
+} from "../../Utilities/stateSelectors";
 
 const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
 
-  const { title, description } = useAppSelector(state => state.database.projects.find(p => p.slug === slug)) ?? {
-    title: "Undefined",
-    description: "Undefined",
-  };
-  const relatedDocuments = useAppSelector(state => state.database.documents.filter(d => d.projectSlug === slug));
-
+  const {
+    title = 'Undefined',
+    description = 'Undefined',
+    isArchived = false
+  } = useAppSelector(projectSelector(slug)) ?? {};
+  const relatedDocuments = useAppSelector(
+    documentsSelector({ projectSlug: slug, isArchived })
+  );
   const { request: openApi } = useApi(openProject, null);
 
   return (

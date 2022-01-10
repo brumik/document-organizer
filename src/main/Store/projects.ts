@@ -4,7 +4,7 @@ import BaseStore from "./restApiBase";
 import { Project } from '../../types';
 
 class ProjectStore extends BaseStore<Project> {
-  public getPath(value: string | Project, archived = false): string {
+  public getPath(value: string | Project, archived?: boolean): string {
     const item = typeof value === 'string'
       ? this.getItem(value)
       : value;
@@ -13,10 +13,12 @@ class ProjectStore extends BaseStore<Project> {
       throw new Error(`The item ${value} does not exists to get the path for.`);
     }
 
-    const base =
-      archived || item.isArchived
-        ? this.archivePath
-        : this.basePath;
+    let base = this.basePath;
+    if (typeof archived !== 'undefined' && archived) {
+      base = this.archivePath;
+    } else if (typeof archived === 'undefined' && item.isArchived) {
+      base = this.archivePath;
+    }
 
     return path.join(base, item.slug);
   };
@@ -71,16 +73,16 @@ class ProjectStore extends BaseStore<Project> {
     }
   }
 
-  public async archive(slug: string): Promise<void> {
+  public async archive(slug: string, isArchived: boolean): Promise<void> {
     if (!this.exists(slug)) {
       return Promise.reject(`Cannot archive project: ${slug} does not exist.`);
     }
 
-    this.ensureDirExists(this.getPath(slug, true));
+    this.ensureDirExists(this.getPath(slug, isArchived));
 
     try {
       await promises.rmdir(this.getPath(slug));
-      this.updateData(this.data.map(p => p.slug === slug ? { ...p, isArchived: true } : p));
+      this.updateData(this.data.map(p => p.slug === slug ? { ...p, isArchived } : p));
 
       return Promise.resolve();
     } catch (e) {
