@@ -23,14 +23,14 @@ class ProjectStore extends BaseStore<Project> {
     return path.join(base, item.slug);
   };
 
-  public async add({ slug, ...project }: Project): Promise<void> {
-    if (this.exists(slug)) {
-      return Promise.reject(`Project ${slug} already exists.`);
+  public async add(project: Project): Promise<void> {
+    if (this.exists(project.slug)) {
+      return Promise.reject(`Project ${project.title} already exists.`);
     }
 
     try {
-      await promises.mkdir(this.getPath(slug));
-      this.updateData([...this.data, { slug, ...project }]);
+      await promises.mkdir(this.getPath(project));
+      this.updateData([...this.data, project]);
 
       return Promise.resolve();
     } catch (e) {
@@ -47,7 +47,7 @@ class ProjectStore extends BaseStore<Project> {
     }
 
     try {
-      await promises.rename(this.getPath(oldSlug), this.getPath(project.slug));
+      await promises.rename(this.getPath(oldSlug), this.getPath(project));
       this.updateData(
         this.data.map(p => p.slug === oldSlug ? { ...project } : p)
       );
@@ -64,7 +64,8 @@ class ProjectStore extends BaseStore<Project> {
     }
 
     try {
-      await promises.rmdir(this.getPath(slug));
+      await promises.rm(this.getPath(slug), { recursive: true, force: true });
+      await promises.rm(this.getPath(slug, true), { recursive: true, force: true });
       this.updateData(this.data.filter(p => p.slug !== slug));
 
       return Promise.resolve();

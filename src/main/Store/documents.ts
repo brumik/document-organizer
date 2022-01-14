@@ -68,7 +68,7 @@ class DocumentStore extends BaseStore<Document> {
     }
 
     try {
-      await promises.unlink(this.getPath(slug));
+      await promises.rm(this.getPath(slug), { force: true });
       this.updateData(this.data.filter(p => p.slug !== slug));
 
       return Promise.resolve();

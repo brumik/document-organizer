@@ -31,11 +31,14 @@ const ProjectForm: FC<Record<string, never>> = () => {
   const { request: addApi, ...restAddProject } = useApi(addNewProject, null);
   const { request: updateApi, ...restUpdateProject } = useApi(updateProject, null);
 
-  const [form, setForm] = useState<Project>({
-    slug: '',
-    title: '',
-    description: '',
-  });
+  const [form, setForm] = useState<Project>(
+    editedProject ?? {
+      slug: '',
+      title: '',
+      description: '',
+      tags: [],
+    }
+  );
 
   useEffect(() => {
     setForm(current => ({
@@ -43,12 +46,6 @@ const ProjectForm: FC<Record<string, never>> = () => {
       slug: uniqueSlugHelper(form.title)
     }));
   }, [form.title]);
-
-  useEffect(() => {
-    if (editedProject) {
-      setForm(editedProject);
-    }
-  }, [slug]);
 
   useEffect(() => {
     if (
@@ -129,6 +126,15 @@ const ProjectForm: FC<Record<string, never>> = () => {
                   rows={5}
                   value={form.description}
                   onChange={(description) => setForm({ ...form, description })}
+                />
+              </FormGroup>
+              <FormGroup label="Tags (space divided list)" fieldId="tags">
+                <TextInput
+                  type="text"
+                  id="tags"
+                  name="tags"
+                  value={form.tags.join(' ')}
+                  onChange={(value) => setForm({ ...form, tags: value ? value.split(' ') : []})}
                 />
               </FormGroup>
             </Form>

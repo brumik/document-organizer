@@ -49,6 +49,7 @@ const DocumentForm: FC<Record<string, never>> = () => {
     title: '',
     ext: '',
     projectSlug: './',
+    tags: [],
   });
 
   useEffect(() => {
@@ -171,12 +172,26 @@ const DocumentForm: FC<Record<string, never>> = () => {
                 </FormGroup>
               )}
               {slug && (<p>TODO: Add a link to open the document</p>)}
+              <FormGroup label="Tags (space divided list)" fieldId="tags">
+                <TextInput
+                  type="text"
+                  id="tags"
+                  name="tags"
+                  value={form.tags.join(' ')}
+                  onChange={(value) => setForm({ ...form, tags: value ? value.split(' ') : [] })}
+                />
+              </FormGroup>
               <FormGroup label="Project" fieldId="project">
                 <FormSelect
                   value={form.projectSlug}
                   onChange={projectDropdownOnChange}
                   aria-label="FormSelect Input"
                 >
+                    <FormSelectOption
+                      key="no-project"
+                      value="./"
+                      label="No project"
+                    />
                   {projectDropdownOptions.map((option) => (
                     <FormSelectOption
                       key={option.value}

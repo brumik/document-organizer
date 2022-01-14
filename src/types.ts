@@ -3,6 +3,7 @@ export interface Project {
   title: string;
   description: string;
   isArchived?: boolean;
+  tags: string[];
 }
 
 export interface Document {
@@ -11,6 +12,7 @@ export interface Document {
   ext: string;
   projectSlug: string;
   isArchived?: boolean;
+  tags: string[];
 }
 
 export interface DatabaseType {

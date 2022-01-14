@@ -10,7 +10,9 @@ import {
   Dropdown,
   DropdownItem,
   DropdownPosition,
-  KebabToggle
+  KebabToggle,
+  Label,
+  LabelGroup
 } from "@patternfly/react-core";
 import { useAppSelector } from '../../../store/hooks';
 import { Link, useNavigate } from "react-router-dom";
@@ -36,7 +38,8 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const {
     title = 'Undefined',
     description = 'Undefined',
-    isArchived = false
+    isArchived = false,
+    tags = [],
   } = useAppSelector(projectSelector(slug)) ?? {};
   const relatedDocuments = useAppSelector(
     documentsSelector({ projectSlug: slug, isArchived })
@@ -101,6 +104,10 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
         <p>{description}</p>
       </CardBody>
       <CardFooter>
+        Tags:{' '}
+        <LabelGroup>
+          {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
+        </LabelGroup>
         <p>Number of documents: {relatedDocuments.length}</p>
       </CardFooter>
     </Card>

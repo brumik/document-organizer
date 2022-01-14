@@ -10,7 +10,11 @@ import {
   Dropdown,
   DropdownItem,
   DropdownPosition,
-  KebabToggle
+  KebabToggle,
+  Label,
+  LabelGroup,
+  Stack,
+  StackItem
 } from "@patternfly/react-core";
 import { useAppSelector } from '../../../store/hooks';
 import { Link, useNavigate } from "react-router-dom";
@@ -22,7 +26,7 @@ import {
   openDocument,
   archiveDocument,
 } from '../../../api';
-import { documentSelector } from "../../../Utilities/stateSelectors";
+import { documentSelector, projectSelector } from "../../../Utilities/stateSelectors";
 
 interface Props {
   slug: string;
@@ -31,7 +35,17 @@ interface Props {
 const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { title = '', isArchived = false } = useAppSelector(documentSelector(slug)) ?? {};
+  const {
+    title = '',
+    isArchived = false,
+    projectSlug = '',
+    tags = []
+  } = useAppSelector(documentSelector(slug)) ?? {};
+
+
+  const {
+    title: projectTitle = 'Undefined'
+  } = useAppSelector(projectSelector(projectSlug)) ?? {};
 
   const { request: deleteApi } = useApi(deleteDocument, null);
   const { request: openApi } = useApi(openDocument, null);
@@ -92,7 +106,20 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
         <p>Static desc.</p>
       </CardBody>
       <CardFooter>
-        <SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink>
+        <Stack hasGutter>
+          <StackItem>
+            Tags:{' '}
+            <LabelGroup>
+              {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
+            </LabelGroup>
+          </StackItem>
+          <StackItem>
+            <p>Project: <Link to={`/project/${projectSlug}`}>{projectTitle}</Link></p>
+          </StackItem>
+          <StackItem>
+            <p><SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink></p>
+          </StackItem>
+        </Stack>
       </CardFooter>
     </Card>
   );

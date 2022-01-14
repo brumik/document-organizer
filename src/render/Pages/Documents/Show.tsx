@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
+import { Card, CardBody, CardFooter, CardTitle, Stack, StackItem, Label, LabelGroup } from "@patternfly/react-core";
 import { useAppSelector } from "../../store/hooks";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -8,18 +8,15 @@ import {
   useApi,
   openDocument,
 } from '../../api';
+import { documentSelector, projectSelector } from "../../Utilities/stateSelectors";
 
 const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
-  const { title, projectSlug } = useAppSelector(state => state.database.documents.find(p => p.slug === slug)) ?? {
-    title: "Undefined",
-    projectSlug: '',
-  };
+  const { title = 'Undefined', projectSlug = '', tags = [] } = useAppSelector(documentSelector(slug)) ?? {};
 
-  const project = useAppSelector(state => state.database.projects.find(p => p.slug === projectSlug)) ?? {
-    title: "Undefined",
-    description: "Undefined",
-  };
+  const {
+    title: projectTitle = 'Undefined'
+  } = useAppSelector(projectSelector(projectSlug)) ?? {};
 
   const { request: openApi } = useApi(openDocument, null);
 
@@ -30,8 +27,20 @@ const Show: FC<Record<string, never>> = () => {
         <p>Static description</p>
       </CardBody>
       <CardFooter>
-        <p>Project: <Link to={`/project/${projectSlug}`}>{project.title}</Link></p>
-        <SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink>
+        <Stack hasGutter>
+          <StackItem>
+            Tags:{' '}
+            <LabelGroup>
+              {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
+            </LabelGroup>
+          </StackItem>
+          <StackItem>
+            <p>Project: <Link to={`/project/${projectSlug}`}>{projectTitle}</Link></p>
+          </StackItem>
+          <StackItem>
+            <p><SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink></p>
+          </StackItem>
+        </Stack>
       </CardFooter>
     </Card>
   );
