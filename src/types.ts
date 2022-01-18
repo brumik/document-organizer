@@ -4,6 +4,7 @@ export interface Project {
   description: string;
   isArchived?: boolean;
   tags: string[];
+  isStarred?: boolean;
 }
 
 export interface Document {
@@ -13,6 +14,7 @@ export interface Document {
   projectSlug: string;
   isArchived?: boolean;
   tags: string[];
+  isStarred?: boolean;
 }
 
 export interface DatabaseType {
