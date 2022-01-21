@@ -21,15 +21,17 @@ const NavDefaultList: FC<Record<string, never>> = () => (
   <Nav>
     <NavList>
       <CustomNavItem to="/">Main page</CustomNavItem>
+      <CustomNavItem to="/settings">Settings</CustomNavItem>
       <NavGroup title="Projects">
+        <CustomNavItem to="/project/starred">Starred</CustomNavItem>
         <CustomNavItem to="/project">List</CustomNavItem>
         <CustomNavItem to="/project/archive">Archive</CustomNavItem>
       </NavGroup>
       <NavGroup title="Documents">
+        <CustomNavItem to="/document/starred">Starred</CustomNavItem>
         <CustomNavItem to="/document">List</CustomNavItem>
         <CustomNavItem to="/document/archive">Archive</CustomNavItem>
       </NavGroup>
-      <CustomNavItem to="/settings">Settings</CustomNavItem>
     </NavList>
   </Nav>
 )

@@ -16,20 +16,23 @@ import {
 } from "@patternfly/react-core";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../../store";
-import { Document } from "../../types";
 import uniqueSlugHelper from "../../Utilities/uniqueSlugHelper";
 import {
   useApi,
   addNewDocument,
   updateDocument,
-  selectDocumentToUpload
+  selectDocumentToUpload,
 } from '../../api';
+import {
+  documentSelector,
+  projectsSelector,
+} from "../../Utilities/stateSelectors";
 
 const DocumentForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
   const navigate = useNavigate();
 
-  const editedDoc = useAppSelector(state => state.database.documents.find(d => d.slug === slug));
+  const editedDoc = useAppSelector(documentSelector(slug ?? ''));
 
   const { request: addApi, isSuccess: addSuccess } = useApi(addNewDocument, null);
   const { request: updateApi, isSuccess: updateSuccess } = useApi(updateDocument, null);
@@ -39,18 +42,11 @@ const DocumentForm: FC<Record<string, never>> = () => {
     result: selectedPath,
   } = useApi(selectDocumentToUpload, '');
 
-  const projectDropdownOptions = useAppSelector(state => 
-    state.database.projects
-      .map(({ slug, title }) => ({ value: slug, label: title }))
-    );
+  const projectDropdownOptions = 
+    useAppSelector(projectsSelector({ isArchived: false }))
+      .map(({ slug, title }) => ({ value: slug, label: title }));
 
-  const [form, setForm] = useState<Document>({
-    slug: '',
-    title: '',
-    ext: '',
-    projectSlug: './',
-    tags: [],
-  });
+  const [form, setForm] = useState(editedDoc);
 
   useEffect(() => {
     setForm(current => ({
@@ -58,12 +54,6 @@ const DocumentForm: FC<Record<string, never>> = () => {
       slug: uniqueSlugHelper(form.title)
     }));
   }, [form.title]);
-
-  useEffect(() => {
-    if (editedDoc) {
-      setForm({ ...editedDoc });
-    }
-  }, [slug]);
 
   useEffect(() => {
     const extReg = /(?:\.([^.]+))?$/;
@@ -76,17 +66,17 @@ const DocumentForm: FC<Record<string, never>> = () => {
     }
   }, [selectedPath])
 
+  useEffect(() => {
+    if (addSuccess || updateSuccess)
+      navigate(`/document/${form.slug}`);
+  }, [addSuccess, updateSuccess]);
+
   const projectDropdownOnChange = (projectSlug: string) => {
     setForm(current => ({
       ...current,
       projectSlug
     }));
   };
-
-  useEffect(() => {
-    if (addSuccess || updateSuccess)
-      navigate(`/document/${form.slug}`);
-  }, [addSuccess, updateSuccess]);
 
   const onSave = () => {
     if (slug)

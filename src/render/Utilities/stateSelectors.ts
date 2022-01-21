@@ -1,11 +1,32 @@
 import { RootState } from "../store";
 
+const defaultDocument = {
+  slug: '',
+  title: '',
+  ext: '',
+  projectSlug: '',
+  tags: [],
+  isArchived: false,
+  isStarred: false,
+};
+
+const defaultProject = {
+  slug: '',
+  title: '',
+  description: '',
+  isArchived: false,
+  tags: [],
+  isStarred: false,
+};
+
 export const documentsSelector = ({ 
   projectSlug,
   isArchived,
+  isStarred,
 }: {
-  projectSlug?: string,
-  isArchived?: boolean,
+  projectSlug?: string;
+  isArchived?: boolean;
+  isStarred?: boolean;
 }) => (state: RootState) => {
   let documents = state.database.documents;
 
@@ -17,25 +38,37 @@ export const documentsSelector = ({
     documents = documents.filter(doc => !!doc.isArchived === isArchived);
   }
 
+  if (typeof isStarred !== "undefined") {
+    documents = documents.filter(doc => !!doc.isStarred === isStarred);
+  }
+
   return documents;
 };
 
-export const documentSelector = (slug: string) => (state: RootState) => {
-  return state.database.documents.find(doc => doc.slug === slug);
-};
+export const documentSelector = (slug: string) => (state: RootState) => 
+  state.database.documents.find(doc => doc.slug === slug)
+  ?? defaultDocument;
 
 export const projectsSelector = ({
   isArchived,
+  isStarred,
 }: {
-  isArchived?: boolean,
+  isArchived?: boolean;
+  isStarred?: boolean;
 }) => (state: RootState) => {
+  let projects = state.database.projects;
+
   if (typeof isArchived !== "undefined") {
-    return state.database.projects.filter(project => !!project.isArchived === isArchived);
+    projects = projects.filter(project => !!project.isArchived === isArchived);
   }
 
-  return state.database.projects;
+  if (typeof isStarred !== "undefined") {
+    projects = projects.filter(project => !!project.isStarred === isStarred);
+  }
+
+  return projects;
 };
 
-export const projectSelector = (slug: string) => (state: RootState) => {
-  return state.database.projects.find(project => project.slug === slug);
-};
+export const projectSelector = (slug: string) => (state: RootState) => 
+  state.database.projects.find(project => project.slug === slug)
+  ?? defaultProject;

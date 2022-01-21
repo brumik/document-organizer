@@ -5,8 +5,13 @@ import ListItem from "./Components/ProjectListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { projectsSelector } from "../../Utilities/stateSelectors";
 
-const List: FC<Record<string, never>> = () => {
-  const keys = useAppSelector(projectsSelector({ isArchived: false })).map(p => p.slug) ?? [];
+interface Props {
+  isArchived?: boolean;
+  isStarred?: boolean;
+}
+
+const List: FC<Props> = (props) => {
+  const keys = useAppSelector(projectsSelector(props)).map(p => p.slug);
 
   return (
     <Stack hasGutter>

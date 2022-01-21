@@ -2,9 +2,9 @@ export interface Project {
   slug: string;
   title: string;
   description: string;
-  isArchived?: boolean;
+  isArchived: boolean;
   tags: string[];
-  isStarred?: boolean;
+  isStarred: boolean;
 }
 
 export interface Document {
@@ -12,9 +12,9 @@ export interface Document {
   title: string;
   ext: string;
   projectSlug: string;
-  isArchived?: boolean;
+  isArchived: boolean;
   tags: string[];
-  isStarred?: boolean;
+  isStarred: boolean;
 }
 
 export interface DatabaseType {

@@ -14,31 +14,24 @@ import {
 } from "@patternfly/react-core";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
-import { Project } from "../../types";
 import uniqueSlugHelper from "../../Utilities/uniqueSlugHelper";
 import {
   useApi,
   addNewProject,
   updateProject,
 } from '../../api';
+import { projectSelector } from "../../Utilities/stateSelectors";
 
 const ProjectForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
   const navigate = useNavigate();
 
-  const editedProject = useAppSelector(state => state.database.projects.find(p => p.slug === slug));
+  const editedProject = useAppSelector(projectSelector(slug ?? ''));
 
   const { request: addApi, ...restAddProject } = useApi(addNewProject, null);
   const { request: updateApi, ...restUpdateProject } = useApi(updateProject, null);
 
-  const [form, setForm] = useState<Project>(
-    editedProject ?? {
-      slug: '',
-      title: '',
-      description: '',
-      tags: [],
-    }
-  );
+  const [form, setForm] = useState(editedProject);
 
   useEffect(() => {
     setForm(current => ({

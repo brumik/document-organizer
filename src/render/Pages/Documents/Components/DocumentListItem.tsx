@@ -25,8 +25,12 @@ import {
   deleteDocument,
   openDocument,
   archiveDocument,
+  toggleDocumentStar,
 } from '../../../api';
-import { documentSelector, projectSelector } from "../../../Utilities/stateSelectors";
+import {
+  documentSelector,
+  projectSelector
+} from "../../../Utilities/stateSelectors";
 
 interface Props {
   slug: string;
@@ -35,21 +39,15 @@ interface Props {
 const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const {
-    title = '',
-    isArchived = false,
-    projectSlug = '',
-    tags = []
-  } = useAppSelector(documentSelector(slug)) ?? {};
+  const document = useAppSelector(documentSelector(slug));
 
-
-  const {
-    title: projectTitle = 'Undefined'
-  } = useAppSelector(projectSelector(projectSlug)) ?? {};
+  const { title: projectTitle } =
+    useAppSelector(projectSelector(document.projectSlug));
 
   const { request: deleteApi } = useApi(deleteDocument, null);
   const { request: openApi } = useApi(openDocument, null);
   const { request: archiveApi } = useApi(archiveDocument, null);
+  const { request: starApi } = useApi(toggleDocumentStar, null);
 
   const kebabDropDownItems = [
     <DropdownItem
@@ -58,9 +56,21 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
     >
       Edit
     </DropdownItem>,
+    <DropdownItem
+      key="archive"
+      onClick={() => archiveApi({ slug, isArchived: !document.isArchived })}
+    >
+      {document.isArchived ? 'Unarchive' : 'Archive'}
+    </DropdownItem>,
+    <DropdownItem
+      key="star"
+      onClick={() => starApi({ document })}
+    >
+      {document.isStarred ? 'Unstar' : 'Star'}
+    </DropdownItem>,
     <DeleteConfirmModal
       key="delete"
-      name={title}
+      name={document.title}
       deleteAction={() => {
         deleteApi({ slug });
       }}
@@ -69,19 +79,13 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
         Delete
       </DropdownItem>
     </DeleteConfirmModal>,
-    <DropdownItem
-      key="archive"
-      onClick={() => archiveApi({ slug, isArchived: !isArchived })}
-    >
-      {isArchived ? 'Unarchive' : 'Archive'}
-    </DropdownItem>
   ];
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          <Link to={`/document/${slug}`}>{title}</Link>
+          <Link to={`/document/${slug}`}>{document.title}</Link>
         </CardTitle>
         <CardActions>
           <Dropdown
@@ -110,14 +114,22 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
           <StackItem>
             Tags:{' '}
             <LabelGroup>
-              {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
+              {document.tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
             </LabelGroup>
           </StackItem>
           <StackItem>
-            <p>Project: <Link to={`/project/${projectSlug}`}>{projectTitle}</Link></p>
+            <p>Project:
+              <Link to={`/project/${document.projectSlug}`}>
+                {projectTitle}
+              </Link>
+            </p>
           </StackItem>
           <StackItem>
-            <p><SimpleLink onClick={() => openApi({ slug })}>Show file</SimpleLink></p>
+            <p>
+              <SimpleLink onClick={() => openApi({ slug })}>
+                Show file
+              </SimpleLink>
+            </p>
           </StackItem>
         </Stack>
       </CardFooter>

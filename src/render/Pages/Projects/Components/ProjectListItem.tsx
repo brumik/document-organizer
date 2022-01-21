@@ -21,6 +21,7 @@ import {
   useApi,
   deleteProject,
   archiveProject,
+  toggleProjectStar,
 } from '../../../api';
 import {
   documentsSelector,
@@ -35,19 +36,16 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const {
-    title = 'Undefined',
-    description = 'Undefined',
-    isArchived = false,
-    tags = [],
-  } = useAppSelector(projectSelector(slug)) ?? {};
+  const project = useAppSelector(projectSelector(slug));
+  const { title, description, isArchived, tags } = project;
+
   const relatedDocuments = useAppSelector(
     documentsSelector({ projectSlug: slug, isArchived })
   );
 
   const { request: deleteApi } = useApi(deleteProject, null);
   const { request: archiveApi } = useApi(archiveProject, null);
-
+  const { request: starApi } = useApi(toggleProjectStar, null);
   
   const kebabDropDownItems = [
     <DropdownItem
@@ -55,6 +53,18 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
       onClick={() => navigate(`/project/${slug}/edit`)}
     >
       Edit
+    </DropdownItem>,
+    <DropdownItem
+      key="archive"
+      onClick={() => archiveApi({ slug, isArchived: !isArchived })}
+    >
+      {isArchived ? 'Unarchive' : 'Archive'}
+    </DropdownItem>,
+    <DropdownItem
+      key="star"
+      onClick={() => starApi({ project })}
+    >
+      {project.isStarred ? 'Unstar' : 'Star'}
     </DropdownItem>,
     <DeleteConfirmModal
       key="delete"
@@ -66,13 +76,7 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
         <DropdownItem style={{ color: 'red' }}>
           Delete
         </DropdownItem>
-    </DeleteConfirmModal>,
-    <DropdownItem
-      key="archive"
-      onClick={() => archiveApi({ slug, isArchived: !isArchived })}
-    >
-      {isArchived ? 'Unarchive' : 'Archive'}
-    </DropdownItem>
+    </DeleteConfirmModal>
   ];
 
   return (

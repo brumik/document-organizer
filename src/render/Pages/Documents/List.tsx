@@ -5,8 +5,13 @@ import ListItem from "./Components/DocumentListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { documentsSelector } from "../../Utilities/stateSelectors";
 
-const List: FC<Record<string, never>> = () => {
-  const keys = useAppSelector(documentsSelector({ isArchived: false })).map(d => d.slug) ?? [];
+interface Props {
+  isArchived?: boolean;
+  isStarred?: boolean;
+}
+
+const List: FC<Props> = (props) => {
+  const keys = useAppSelector(documentsSelector(props)).map(d => d.slug) ?? [];
 
   return (
     <Stack hasGutter>
