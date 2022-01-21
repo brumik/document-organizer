@@ -3,14 +3,12 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] Bug: Undeinfed project showing up with files without project
-* [ ] Expiration dates
-  * Add expiration date to document/project
-
-Todos for later:
-* [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
 * [ ] Dashboard for the App
   * Summary of projects, documents, expiration dates, tags, etc.
+
+Todos for later:
+* [ ] Bug: Undeinfed project showing up with files without project
+* [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
 * [ ] Add empty states to the pages when there is no item.
 * [ ] Remove the add new fields from the starred and archived pages
 * [ ] Search bar for tags, names and all

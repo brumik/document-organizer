@@ -1,6 +1,8 @@
 import { RootState } from "../store";
+import { Document, Project } from "../types";
 
-const defaultDocument = {
+
+const defaultDocument: Document = {
   slug: '',
   title: '',
   ext: '',
@@ -8,15 +10,17 @@ const defaultDocument = {
   tags: [],
   isArchived: false,
   isStarred: false,
+  expirationDate: '',
 };
 
-const defaultProject = {
+const defaultProject: Project = {
   slug: '',
   title: '',
   description: '',
   isArchived: false,
   tags: [],
   isStarred: false,
+  expirationDate: '',
 };
 
 export const documentsSelector = ({ 

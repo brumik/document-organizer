@@ -25,7 +25,6 @@ class Main {
     const mainWindow = new BrowserWindow({
       ...global.preferencesStore.windowBounds,
       webPreferences: {
-        nodeIntegration: false, // is default value after Electron v5
         contextIsolation: true, // protect against prototype pollution
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script 
       }

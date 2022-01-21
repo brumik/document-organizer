@@ -12,7 +12,9 @@ import {
   DropdownPosition,
   KebabToggle,
   Label,
-  LabelGroup
+  LabelGroup,
+  Stack,
+  StackItem
 } from "@patternfly/react-core";
 import { useAppSelector } from '../../../store/hooks';
 import { Link, useNavigate } from "react-router-dom";
@@ -108,11 +110,24 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
         <p>{description}</p>
       </CardBody>
       <CardFooter>
-        Tags:{' '}
-        <LabelGroup>
-          {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
-        </LabelGroup>
-        <p>Number of documents: {relatedDocuments.length}</p>
+        <Stack>
+          {tags.length > 0 && (
+            <StackItem>
+              Tags:{' '}
+              <LabelGroup>
+                {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
+              </LabelGroup>
+            </StackItem>
+          )}
+          {project.expirationDate && (
+            <StackItem>
+              <p>Expires at: <strong>{project.expirationDate}</strong></p>
+            </StackItem>
+          )}
+          <StackItem>
+            <p>Number of documents: {relatedDocuments.length}</p>
+          </StackItem>
+        </Stack>
       </CardFooter>
     </Card>
   );

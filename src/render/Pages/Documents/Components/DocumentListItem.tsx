@@ -124,6 +124,11 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
               </Link>
             </p>
           </StackItem>
+          {document.expirationDate && (
+            <StackItem>
+              <p>Expires at: <strong>{document.expirationDate}</strong></p>
+            </StackItem>
+          )}
           <StackItem>
             <p>
               <SimpleLink onClick={() => openApi({ slug })}>

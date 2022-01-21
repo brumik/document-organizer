@@ -5,6 +5,7 @@ export interface Project {
   isArchived: boolean;
   tags: string[];
   isStarred: boolean;
+  expirationDate: string;
 }
 
 export interface Document {
@@ -15,6 +16,7 @@ export interface Document {
   isArchived: boolean;
   tags: string[];
   isStarred: boolean;
+  expirationDate: string;
 }
 
 export interface DatabaseType {

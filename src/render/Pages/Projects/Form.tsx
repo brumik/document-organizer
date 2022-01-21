@@ -5,10 +5,15 @@ import {
   Card,
   CardBody,
   CardTitle,
+  DatePicker,
   Form,
   FormGroup,
   Grid,
   GridItem,
+  InputGroup,
+  InputGroupText,
+  InputGroupTextVariant,
+  Switch,
   TextArea,
   TextInput
 } from "@patternfly/react-core";
@@ -32,6 +37,7 @@ const ProjectForm: FC<Record<string, never>> = () => {
   const { request: updateApi, ...restUpdateProject } = useApi(updateProject, null);
 
   const [form, setForm] = useState(editedProject);
+  const [hasExpiration, setHasExpiration] = useState(!!form.expirationDate);
 
   useEffect(() => {
     setForm(current => ({
@@ -129,6 +135,26 @@ const ProjectForm: FC<Record<string, never>> = () => {
                   value={form.tags.join(' ')}
                   onChange={(value) => setForm({ ...form, tags: value ? value.split(' ') : []})}
                 />
+              </FormGroup>
+              <FormGroup label="Expiration Date" fieldId="expiration-date">
+                <InputGroup>
+                  <DatePicker
+                    id="expiration-date"
+                    isDisabled={!hasExpiration}
+                    value={form.expirationDate}
+                    onChange={expirationDate => setForm({ ...form, expirationDate })}
+                  />
+                  <InputGroupText variant={InputGroupTextVariant.plain}>
+                    <Switch
+                      aria-label="Toggle expiration date"
+                      isChecked={hasExpiration}
+                      onChange={() => {
+                        setHasExpiration(!hasExpiration);
+                        setForm({ ...form, expirationDate: '' });
+                      }}
+                    />
+                  </InputGroupText>
+                </InputGroup>
               </FormGroup>
             </Form>
           </CardBody>

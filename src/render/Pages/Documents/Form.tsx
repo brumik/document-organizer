@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   CardTitle,
+  DatePicker,
   Form,
   FormGroup,
   FormSelect,
@@ -12,6 +13,9 @@ import {
   Grid,
   GridItem,
   InputGroup,
+  InputGroupText,
+  InputGroupTextVariant,
+  Switch,
   TextInput
 } from "@patternfly/react-core";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,11 +26,13 @@ import {
   addNewDocument,
   updateDocument,
   selectDocumentToUpload,
+  openDocument,
 } from '../../api';
 import {
   documentSelector,
   projectsSelector,
 } from "../../Utilities/stateSelectors";
+import SimpleLink from "../../Utilities/SimpleLink";
 
 const DocumentForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
@@ -41,12 +47,15 @@ const DocumentForm: FC<Record<string, never>> = () => {
     request: getDocumentPath,
     result: selectedPath,
   } = useApi(selectDocumentToUpload, '');
+  const { request: openApi } = useApi(openDocument, null);
+
 
   const projectDropdownOptions = 
     useAppSelector(projectsSelector({ isArchived: false }))
       .map(({ slug, title }) => ({ value: slug, label: title }));
 
   const [form, setForm] = useState(editedDoc);
+  const [hasExpiration, setHasExpiration] = useState(!!form.expirationDate);
 
   useEffect(() => {
     setForm(current => ({
@@ -161,7 +170,20 @@ const DocumentForm: FC<Record<string, never>> = () => {
                   </InputGroup>
                 </FormGroup>
               )}
-              {slug && (<p>TODO: Add a link to open the document</p>)}
+              {slug && (<p>
+                <SimpleLink onClick={() => openApi({ slug })}>
+                  Show file
+                </SimpleLink>
+              </p>)}
+            </Form>
+          </CardBody>
+        </Card>
+      </GridItem>
+      <GridItem md={6} sm={12}>
+        <Card>
+          <CardTitle>Document information</CardTitle>
+          <CardBody>
+            <Form>
               <FormGroup label="Tags (space divided list)" fieldId="tags">
                 <TextInput
                   type="text"
@@ -177,11 +199,11 @@ const DocumentForm: FC<Record<string, never>> = () => {
                   onChange={projectDropdownOnChange}
                   aria-label="FormSelect Input"
                 >
-                    <FormSelectOption
-                      key="no-project"
-                      value="./"
-                      label="No project"
-                    />
+                  <FormSelectOption
+                    key="no-project"
+                    value="./"
+                    label="No project"
+                  />
                   {projectDropdownOptions.map((option) => (
                     <FormSelectOption
                       key={option.value}
@@ -190,6 +212,26 @@ const DocumentForm: FC<Record<string, never>> = () => {
                     />
                   ))}
                 </FormSelect>
+              </FormGroup>
+              <FormGroup label="Expiration Date" fieldId="expiration-date">
+                <InputGroup>
+                  <DatePicker
+                    id="expiration-date"
+                    isDisabled={!hasExpiration}
+                    value={form.expirationDate}
+                    onChange={expirationDate => setForm({ ...form, expirationDate})}
+                  />
+                  <InputGroupText variant={InputGroupTextVariant.plain}>
+                    <Switch
+                      aria-label="Toggle expiration date"
+                      isChecked={hasExpiration}
+                      onChange={() => {
+                        setHasExpiration(!hasExpiration);
+                        setForm({ ...form, expirationDate: '' });
+                      }}
+                    />
+                  </InputGroupText>
+                </InputGroup>
               </FormGroup>
             </Form>
           </CardBody>
