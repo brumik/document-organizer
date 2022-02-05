@@ -3,8 +3,15 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] Dashboard for the App
-  * Summary of projects, documents, expiration dates, tags, etc.
+* [ ] UI: Show project screen owerhaul
+  * show tags, archive badge, etc...
+* [ ] UI: Show document screen owerhaul
+  * show tags, archive badge, etc...
+* [ ] UI: Cards overhaul:
+  * show tags, archive badge, organize the information somehow
+* [ ] UI: Do something with the checkboxes on the project list page
+  * mass actions like archive, delete, etc...
+  * or disable it for now
 
 Todos for later:
 * [ ] Bug: Undeinfed project showing up with files without project
@@ -12,12 +19,12 @@ Todos for later:
 * [ ] Add empty states to the pages when there is no item.
 * [ ] Remove the add new fields from the starred and archived pages
 * [ ] Search bar for tags, names and all
+* [ ] Toolbar with sort options
   * Allow bookmarking page with exact search
   * It means the search should be in the URL
 * [ ] Slugs => allow for edit or add a subfix for cases where the Title is the same but the user wants to save it still (maybe different folder)
 * [ ] Project form => add documents from this screen too
   * Save project -> open show scree, button here to "Add documents"
-* [ ] Do something with the checkboxes on the project list page
 * [ ] Optimize reloadAll() function to ask for specific parts of DB.
 * [ ] Check the `catch` blocks in the backed what they can return and replace them with string
 * [ ] App update distribution, we don't want to download all the time a new exe, right?

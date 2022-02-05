@@ -18,6 +18,7 @@ import {
   Show as ProjShow,
   Form as ProjForm,
 } from "./Pages/Projects";
+import DashboardPage from "./Pages/Dashboard";
 import {
   List as DocList,
   Show as DocShow,
@@ -74,7 +75,7 @@ const App: FC<Record<string, never>> = () => {
     <Page isManagedSidebar header={Header} sidebar={Sidebar} style={{ minHeight: "100vh" }}>
       <PageSection isFilled>
         <Routes>
-          <Route path="/" element={<ProjList />} />
+          <Route path="/" element={<DashboardPage />} />
           <Route path="/project" element={<ProjList isArchived={false} />} />
           <Route path="/project/starred" element={<ProjList isStarred isArchived={false} />} />
           <Route path="/project/archive" element={<ProjList isArchived />} />

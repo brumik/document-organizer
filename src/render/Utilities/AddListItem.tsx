@@ -2,8 +2,7 @@ import React, { FC } from "react";
 import styled from "styled-components";
 import { Card, CardBody, CardTitle } from "@patternfly/react-core";
 import { Link } from "react-router-dom";
-import AddCircleOIcon from '@patternfly/react-icons/dist/js/icons/add-circle-o-icon'; 
-import { IconSize } from "@patternfly/react-icons";
+import { IconSize, AddCircleOIcon } from "@patternfly/react-icons";
 
 const CenteredLink = styled(Link)`
   display: flex;

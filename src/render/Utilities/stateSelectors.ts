@@ -1,7 +1,6 @@
 import { RootState } from "../store";
 import { Document, Project } from "../types";
 
-
 const defaultDocument: Document = {
   slug: '',
   title: '',

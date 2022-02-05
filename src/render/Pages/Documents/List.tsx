@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Card, CardBody, CardTitle, Gallery, GalleryItem, Stack, StackItem } from "@patternfly/react-core";
+import { Card, CardBody, CardTitle, Gallery, Stack, StackItem } from "@patternfly/react-core";
 import { useAppSelector } from "../../store/hooks";
 import ListItem from "./Components/DocumentListItem";
 import AddListItem from "../../Utilities/AddListItem";
