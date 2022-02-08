@@ -127,13 +127,13 @@ const ProjectForm: FC<Record<string, never>> = () => {
                   onChange={(description) => setForm({ ...form, description })}
                 />
               </FormGroup>
-              <FormGroup label="Tags (space divided list)" fieldId="tags">
+              <FormGroup label="Tags (comma divided list)" fieldId="tags">
                 <TextInput
                   type="text"
                   id="tags"
                   name="tags"
-                  value={form.tags.join(' ')}
-                  onChange={(value) => setForm({ ...form, tags: value ? value.split(' ') : []})}
+                  value={form.tags.join(',')}
+                  onChange={(value) => setForm({ ...form, tags: value ? value.split(',') : []})}
                 />
               </FormGroup>
               <FormGroup label="Expiration Date" fieldId="expiration-date">

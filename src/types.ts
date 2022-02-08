@@ -13,6 +13,7 @@ export interface Document {
   title: string;
   ext: string;
   projectSlug: string;
+  description: string;
   isArchived: boolean;
   tags: string[];
   isStarred: boolean;

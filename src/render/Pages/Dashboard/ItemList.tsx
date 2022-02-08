@@ -1,5 +1,5 @@
 import {
-  Card as PFCard,
+  Card,
   CardBody,
   CardTitle,
   EmptyState,
@@ -13,17 +13,12 @@ import { CubesIcon, IconSize, StarIcon } from "@patternfly/react-icons";
 import { Document, Project } from "../../types";
 import { Link } from "react-router-dom";
 import { dateSmaller } from "./helpers";
-import styled from "styled-components";
 
 interface Props {
   items: Document[] | Project[];
   title: string;
   showExpiration?: boolean;
 };
-
-const Card = styled(PFCard)`
-  height: 100%;
-`;
 
 const linkTo = (item: Document | Project) => {
   if ('projectSlug' in item) {
@@ -48,7 +43,7 @@ const ItemList: FC<Props> = ({
   items,
   showExpiration = false
 }) => (
-  <Card>
+  <Card isFullHeight>
     <CardTitle>{title}</CardTitle>
     <CardBody>
       {items.length < 1 && (

@@ -21,7 +21,6 @@ import {
 import DashboardPage from "./Pages/Dashboard";
 import {
   List as DocList,
-  Show as DocShow,
   Form as DocForm,
 } from "./Pages/Documents";
 import NavigationButtons from "./Utilities/NavigationButtons";
@@ -85,7 +84,6 @@ const App: FC<Record<string, never>> = () => {
           <Route path="/document" element={<DocList isArchived={false} />} />
           <Route path="/document/starred" element={<DocList isStarred isArchived={false} />} />
           <Route path="/document/archive" element={<DocList isArchived />} />
-          <Route path="/document/:slug" element={<DocShow />} />
           <Route path="/document/:slug/edit" element={<DocForm />} />
           <Route path="/document/new" element={<DocForm />} />
           <Route path="/settings" element={<SettingsPage />} />

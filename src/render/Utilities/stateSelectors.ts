@@ -6,6 +6,7 @@ const defaultDocument: Document = {
   title: '',
   ext: '',
   projectSlug: '',
+  description: '',
   tags: [],
   isArchived: false,
   isStarred: false,

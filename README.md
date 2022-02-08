@@ -5,13 +5,6 @@ A desktop electron app to help you stay on top of your documents
 Follow the list:
 * [ ] UI: Show project screen owerhaul
   * show tags, archive badge, etc...
-* [ ] UI: Show document screen owerhaul
-  * show tags, archive badge, etc...
-* [ ] UI: Cards overhaul:
-  * show tags, archive badge, organize the information somehow
-* [ ] UI: Do something with the checkboxes on the project list page
-  * mass actions like archive, delete, etc...
-  * or disable it for now
 
 Todos for later:
 * [ ] Bug: Undeinfed project showing up with files without project

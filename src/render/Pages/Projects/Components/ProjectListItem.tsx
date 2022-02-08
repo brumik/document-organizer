@@ -6,13 +6,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownPosition,
   KebabToggle,
   Label,
   LabelGroup,
+  Split,
+  SplitItem,
   Stack,
   StackItem
 } from "@patternfly/react-core";
@@ -24,11 +25,14 @@ import {
   deleteProject,
   archiveProject,
   toggleProjectStar,
+  openProject,
 } from '../../../api';
 import {
   documentsSelector,
   projectSelector
 } from "../../../Utilities/stateSelectors";
+import { ArchiveIcon, CalendarDayIcon, CopyIcon, StarIcon } from "@patternfly/react-icons";
+import SimpleLink from "../../../Utilities/SimpleLink";
 
 interface Props {
   slug: string;
@@ -39,7 +43,14 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const navigate = useNavigate();
 
   const project = useAppSelector(projectSelector(slug));
-  const { title, description, isArchived, tags } = project;
+  const {
+    title,
+    description,
+    isArchived,
+    isStarred,
+    tags,
+    expirationDate
+  } = project;
 
   const relatedDocuments = useAppSelector(
     documentsSelector({ projectSlug: slug, isArchived })
@@ -48,6 +59,8 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   const { request: deleteApi } = useApi(deleteProject, null);
   const { request: archiveApi } = useApi(archiveProject, null);
   const { request: starApi } = useApi(toggleProjectStar, null);
+  const { request: showApi } = useApi(openProject, null);
+
   
   const kebabDropDownItems = [
     <DropdownItem
@@ -85,6 +98,7 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
     <Card>
       <CardHeader>
         <CardTitle>
+          {isStarred && <><StarIcon color="gold" />{' '}</>}
           <Link to={`/project/${slug}`}>{title}</Link>
         </CardTitle>
         <CardActions>
@@ -99,35 +113,43 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
             dropdownItems={kebabDropDownItems}
             position={DropdownPosition.right}
           />
-          <Checkbox
-            aria-label="card checkbox"
-            id="check-1"
-            name="check1"
-          />
         </CardActions>
       </CardHeader>
       <CardBody>
-        <p>{description}</p>
-      </CardBody>
-      <CardFooter>
-        <Stack>
-          {tags.length > 0 && (
+        <Stack hasGutter>
+          {description && (
+            <StackItem>{description}</StackItem>
+          )}
+          {(tags.length > 0 || isArchived) && (
             <StackItem>
-              Tags:{' '}
               <LabelGroup>
-                {tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
+                {[
+                  isArchived && 
+                    <Label key="archived" icon={<ArchiveIcon />}>
+                      Archived
+                    </Label>,
+                  ...tags.map((tag, i) => <Label key={i}>{tag}</Label>),
+                ].filter(Boolean)}
               </LabelGroup>
             </StackItem>
           )}
-          {project.expirationDate && (
-            <StackItem>
-              <p>Expires at: <strong>{project.expirationDate}</strong></p>
-            </StackItem>
-          )}
-          <StackItem>
-            <p>Number of documents: {relatedDocuments.length}</p>
-          </StackItem>
+          <Split hasGutter>
+            <SplitItem>
+              <CopyIcon />{' '}
+                {relatedDocuments.length}
+            </SplitItem>
+            {expirationDate && (
+              <SplitItem>
+                <CalendarDayIcon /> {expirationDate}
+              </SplitItem>
+            )}
+          </Split>
         </Stack>
+      </CardBody>
+      <CardFooter>
+        <SimpleLink onClick={() => showApi({ slug })}>
+          Show in files
+        </SimpleLink>
       </CardFooter>
     </Card>
   );

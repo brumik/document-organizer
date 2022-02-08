@@ -16,6 +16,7 @@ import {
   InputGroupText,
   InputGroupTextVariant,
   Switch,
+  TextArea,
   TextInput
 } from "@patternfly/react-core";
 import { useNavigate, useParams } from "react-router-dom";
@@ -77,7 +78,7 @@ const DocumentForm: FC<Record<string, never>> = () => {
 
   useEffect(() => {
     if (addSuccess || updateSuccess)
-      navigate(`/document/${form.slug}`);
+      navigate(-1);
   }, [addSuccess, updateSuccess]);
 
   const projectDropdownOnChange = (projectSlug: string) => {
@@ -184,13 +185,24 @@ const DocumentForm: FC<Record<string, never>> = () => {
           <CardTitle>Document information</CardTitle>
           <CardBody>
             <Form>
-              <FormGroup label="Tags (space divided list)" fieldId="tags">
+              <FormGroup label="Description" fieldId="description">
+                <TextArea
+                  id="description"
+                  name="description"
+                  aria-label="description"
+                  resizeOrientation="vertical"
+                  rows={5}
+                  value={form.description}
+                  onChange={(description) => setForm({ ...form, description })}
+                />
+              </FormGroup>
+              <FormGroup label="Tags (comma divided list)" fieldId="tags">
                 <TextInput
                   type="text"
                   id="tags"
                   name="tags"
-                  value={form.tags.join(' ')}
-                  onChange={(value) => setForm({ ...form, tags: value ? value.split(' ') : [] })}
+                  value={form.tags.join(',')}
+                  onChange={(value) => setForm({ ...form, tags: value ? value.split(',') : [] })}
                 />
               </FormGroup>
               <FormGroup label="Project" fieldId="project">

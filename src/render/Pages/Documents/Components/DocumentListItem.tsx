@@ -6,13 +6,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownPosition,
   KebabToggle,
   Label,
   LabelGroup,
+  Split,
+  SplitItem,
   Stack,
   StackItem
 } from "@patternfly/react-core";
@@ -26,11 +27,13 @@ import {
   openDocument,
   archiveDocument,
   toggleDocumentStar,
+  openProject,
 } from '../../../api';
 import {
   documentSelector,
   projectSelector
 } from "../../../Utilities/stateSelectors";
+import { ArchiveIcon, CalendarDayIcon, FolderOpenIcon, StarIcon } from "@patternfly/react-icons";
 
 interface Props {
   slug: string;
@@ -40,12 +43,22 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const document = useAppSelector(documentSelector(slug));
+  const {
+    isArchived,
+    isStarred,
+    title,
+    description,
+    tags,
+    expirationDate,
+    projectSlug
+  } = document;
 
   const { title: projectTitle } =
-    useAppSelector(projectSelector(document.projectSlug));
+    useAppSelector(projectSelector(projectSlug));
 
   const { request: deleteApi } = useApi(deleteDocument, null);
   const { request: openApi } = useApi(openDocument, null);
+  const { request: showApi } = useApi(openProject, null);
   const { request: archiveApi } = useApi(archiveDocument, null);
   const { request: starApi } = useApi(toggleDocumentStar, null);
 
@@ -58,19 +71,19 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
     </DropdownItem>,
     <DropdownItem
       key="archive"
-      onClick={() => archiveApi({ slug, isArchived: !document.isArchived })}
+      onClick={() => archiveApi({ slug, isArchived: !isArchived })}
     >
-      {document.isArchived ? 'Unarchive' : 'Archive'}
+      {isArchived ? 'Unarchive' : 'Archive'}
     </DropdownItem>,
     <DropdownItem
       key="star"
       onClick={() => starApi({ document })}
     >
-      {document.isStarred ? 'Unstar' : 'Star'}
+      {isStarred ? 'Unstar' : 'Star'}
     </DropdownItem>,
     <DeleteConfirmModal
       key="delete"
-      name={document.title}
+      name={title}
       deleteAction={() => {
         deleteApi({ slug });
       }}
@@ -85,7 +98,8 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
     <Card>
       <CardHeader>
         <CardTitle>
-          <Link to={`/document/${slug}`}>{document.title}</Link>
+          {isStarred && <><StarIcon color="gold" />{' '}</>}
+          {title}
         </CardTitle>
         <CardActions>
           <Dropdown
@@ -99,44 +113,58 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
             dropdownItems={kebabDropDownItems}
             position={DropdownPosition.right}
           />
-          <Checkbox
-            aria-label="card checkbox"
-            id="check-1"
-            name="check1"
-          />
         </CardActions>
       </CardHeader>
       <CardBody>
-        <p>Static desc.</p>
-      </CardBody>
-      <CardFooter>
         <Stack hasGutter>
-          <StackItem>
-            Tags:{' '}
-            <LabelGroup>
-              {document.tags.map((tag, i) => <Label key={i}>{tag}</Label>)}
-            </LabelGroup>
-          </StackItem>
-          <StackItem>
-            <p>Project:
-              <Link to={`/project/${document.projectSlug}`}>
-                {projectTitle}
-              </Link>
-            </p>
-          </StackItem>
-          {document.expirationDate && (
+          {description && (
+            <StackItem>{description}</StackItem>
+          )}
+          {(tags.length > 0 || isArchived) && (
             <StackItem>
-              <p>Expires at: <strong>{document.expirationDate}</strong></p>
+              <LabelGroup>
+                {[
+                  isArchived && 
+                    <Label key="archived" icon={<ArchiveIcon />}>
+                      Archived
+                    </Label>,
+                  ...tags.map((tag, i) => <Label key={i}>{tag}</Label>),
+                ].filter(Boolean)}
+              </LabelGroup>
             </StackItem>
           )}
           <StackItem>
-            <p>
-              <SimpleLink onClick={() => openApi({ slug })}>
-                Show file
-              </SimpleLink>
-            </p>
+            <Split hasGutter>
+              {projectTitle && (
+                <SplitItem>
+                  <FolderOpenIcon />{' '}
+                    <Link to={`/project/${projectSlug}`}>
+                      {projectTitle}
+                    </Link>
+                </SplitItem>
+              )}
+              {expirationDate && (
+                <SplitItem>
+                  <CalendarDayIcon /> {expirationDate}
+                </SplitItem>
+              )}
+            </Split>
           </StackItem>
         </Stack>
+      </CardBody>
+      <CardFooter>
+        <Split hasGutter>
+          <SplitItem isFilled>
+            <SimpleLink onClick={() => openApi({ slug })}>
+              Open file
+            </SimpleLink>
+          </SplitItem>
+          <SplitItem>
+            <SimpleLink onClick={() => showApi({ slug: projectSlug })}>
+              Show in files
+            </SimpleLink>
+          </SplitItem>
+        </Split>
       </CardFooter>
     </Card>
   );
