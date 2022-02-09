@@ -3,10 +3,7 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] UI: Update the Project form: remove the linked documents section
 * [ ] UI: dashboard documents redirect to a filtered page with the card or other solution since there is no more document show page
-* [ ] UI: Make page titles POP, big and stuff
-* [ ] UI: Update the descriptions in the page titles
 * [ ] UI: Add the toolbar
   * Toolbar where you can:
     * Filter by tags, description, title

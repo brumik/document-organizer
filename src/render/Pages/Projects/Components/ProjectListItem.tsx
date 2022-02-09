@@ -95,7 +95,7 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   ];
 
   return (
-    <Card>
+    <Card isFullHeight>
       <CardHeader>
         <CardTitle>
           {isStarred && <><StarIcon color="gold" />{' '}</>}

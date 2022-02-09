@@ -1,9 +1,10 @@
 import React, { FC } from "react";
-import { Card, CardBody, CardTitle, Gallery, Stack, StackItem } from "@patternfly/react-core";
+import { Gallery, Stack, StackItem } from "@patternfly/react-core";
 import { useAppSelector } from "../../store/hooks";
 import ListItem from "./Components/DocumentListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { documentsSelector } from "../../Utilities/stateSelectors";
+import TitleCard from "../../Utilities/TitleCard";
 
 interface Props {
   isArchived?: boolean;
@@ -16,12 +17,10 @@ const List: FC<Props> = (props) => {
   return (
     <Stack hasGutter>
       <StackItem>
-        <Card>
-          <CardTitle>Documents</CardTitle>
-          <CardBody>
-            This is the page's description.
-          </CardBody>
-        </Card>
+        <TitleCard
+          title="Projects"
+          description="You can find all your active projects on this page."
+        />
       </StackItem>
       <StackItem>
         <Gallery hasGutter>

@@ -26,6 +26,7 @@ import {
   updateProject,
 } from '../../api';
 import { projectSelector } from "../../Utilities/stateSelectors";
+import TitleCard from "../../Utilities/TitleCard";
 
 const ProjectForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
@@ -72,14 +73,12 @@ const ProjectForm: FC<Record<string, never>> = () => {
   return (
     <Grid hasGutter>
       <GridItem span={12}>
-        <Card>
-          <CardTitle>Create a new project</CardTitle>
-          <CardBody>
-            You can create a new project here.
-          </CardBody>
-        </Card>
+        <TitleCard
+          title={slug ? `Edit project "${slug}"` : `Add a new project`}
+          description="Fields marked with a red star are required."
+        />
       </GridItem>
-      <GridItem md={6} sm={12}>
+      <GridItem span={12}>
         <Card>
           <CardTitle>Project details</CardTitle>
           <CardBody>
@@ -157,16 +156,6 @@ const ProjectForm: FC<Record<string, never>> = () => {
                 </InputGroup>
               </FormGroup>
             </Form>
-          </CardBody>
-        </Card>
-      </GridItem>
-      <GridItem md={6} sm={12}>
-        <Card>
-          <CardTitle>Linked documents</CardTitle>
-          <CardBody>
-            <p>Document 1</p><br />
-            <p>Document 2</p><br />
-            <p>Document 3</p>
           </CardBody>
         </Card>
       </GridItem>

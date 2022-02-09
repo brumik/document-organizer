@@ -34,6 +34,7 @@ import {
   projectsSelector,
 } from "../../Utilities/stateSelectors";
 import SimpleLink from "../../Utilities/SimpleLink";
+import TitleCard from "../../Utilities/TitleCard";
 
 const DocumentForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
@@ -108,15 +109,13 @@ const DocumentForm: FC<Record<string, never>> = () => {
   return (
     <Grid hasGutter>
       <GridItem span={12}>
-        <Card>
-          <CardTitle>Create a new document</CardTitle>
-          <CardBody>
-            You can create a new document here.
-          </CardBody>
-        </Card>
+        <TitleCard
+          title={slug ? `Edit document "${form.title}"` : `Add a new document`}
+          description="Fields marked with a red star are required."
+        />
       </GridItem>
       <GridItem md={6} sm={12}>
-        <Card>
+        <Card isFullHeight>
           <CardTitle>Document details</CardTitle>
           <CardBody>
             <Form>
