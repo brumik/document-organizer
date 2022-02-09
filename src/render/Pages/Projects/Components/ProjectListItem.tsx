@@ -122,7 +122,7 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
           )}
           {(tags.length > 0 || isArchived) && (
             <StackItem>
-              <LabelGroup>
+              <LabelGroup numLabels={10}>
                 {[
                   isArchived && 
                     <Label key="archived" icon={<ArchiveIcon />}>

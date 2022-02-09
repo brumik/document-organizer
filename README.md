@@ -3,21 +3,26 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] UI: Show project screen owerhaul
-  * show tags, archive badge, etc...
+* [ ] UI: Update the Project form: remove the linked documents section
+* [ ] UI: dashboard documents redirect to a filtered page with the card or other solution since there is no more document show page
+* [ ] UI: Make page titles POP, big and stuff
+* [ ] UI: Update the descriptions in the page titles
+* [ ] UI: Add the toolbar
+  * Toolbar where you can:
+    * Filter by tags, description, title
+    * isArchived, isStarred maybe as a side checkboxes/switches
+  * Allow bookmarking page with exact search
+  * It means the search should be in the URL
+* [ ] UI: Remove different starred and archived pages as it is doable form the toolbar
 
 Todos for later:
-* [ ] Bug: Undeinfed project showing up with files without project
+* [x] Bug: Undeinfed project showing up with files without project
+* [ ] Revise no project documents -> let it be empty string and handle it in the backend
 * [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
 * [ ] Add empty states to the pages when there is no item.
 * [ ] Remove the add new fields from the starred and archived pages
 * [ ] Search bar for tags, names and all
-* [ ] Toolbar with sort options
-  * Allow bookmarking page with exact search
-  * It means the search should be in the URL
 * [ ] Slugs => allow for edit or add a subfix for cases where the Title is the same but the user wants to save it still (maybe different folder)
-* [ ] Project form => add documents from this screen too
-  * Save project -> open show scree, button here to "Add documents"
 * [ ] Optimize reloadAll() function to ask for specific parts of DB.
 * [ ] Check the `catch` blocks in the backed what they can return and replace them with string
 * [ ] App update distribution, we don't want to download all the time a new exe, right?
