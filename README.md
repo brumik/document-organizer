@@ -3,7 +3,6 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] UI: dashboard documents redirect to a filtered page with the card or other solution since there is no more document show page
 * [ ] UI: Add the toolbar
   * Toolbar where you can:
     * Filter by tags, description, title
@@ -15,6 +14,7 @@ Follow the list:
 Todos for later:
 * [x] Bug: Undeinfed project showing up with files without project
 * [ ] Revise no project documents -> let it be empty string and handle it in the backend
+  * Update the dashboard redirect if we are allowing empty projects
 * [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
 * [ ] Add empty states to the pages when there is no item.
 * [ ] Remove the add new fields from the starred and archived pages

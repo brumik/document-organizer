@@ -22,7 +22,7 @@ interface Props {
 
 const linkTo = (item: Document | Project) => {
   if ('projectSlug' in item) {
-    return `/document/${item.slug}`;
+    return `/project/${item.projectSlug}`;
   } else {
     return `/project/${item.slug}`;
   }
@@ -59,7 +59,7 @@ const ItemList: FC<Props> = ({
           {items.map(el => (
             <ListItem
               key={el.slug}
-              icon={el.isStarred ? <StarIcon size={IconSize.md}/> : null}
+              icon={el.isStarred ? <StarIcon size={IconSize.md} color="gold"/> : null}
             >
               <Link to={linkTo(el)}>
                 {getTitle(el, showExpiration)}
