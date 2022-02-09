@@ -18,8 +18,8 @@ const List: FC<Props> = (props) => {
     <Stack hasGutter>
       <StackItem>
         <TitleCard
-          title="Projects"
-          description="You can find all your active projects on this page."
+          title="Documents"
+          description="You can find all your active documents on this page."
         />
       </StackItem>
       <StackItem>

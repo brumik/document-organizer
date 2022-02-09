@@ -16,6 +16,7 @@ Todos for later:
 * [ ] Revise no project documents -> let it be empty string and handle it in the backend
   * Update the dashboard redirect if we are allowing empty projects
 * [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
+* [ ] Revise how to archive documents (active project archived documet -> project not in archive, inside project folder an archive folder where the document would be)
 * [ ] Add empty states to the pages when there is no item.
 * [ ] Remove the add new fields from the starred and archived pages
 * [ ] Search bar for tags, names and all
