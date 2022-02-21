@@ -12,6 +12,7 @@ import {
   projectExpirationFilter
 } from "./helpers";
 import { FilterStatus } from "../../store/filter/types";
+import Page from "../../Utilities/Page";
 
 const DashboardPage: FC<Record<string, never>> = () => {
   const listItems = (type: 'doc' | 'proj') => 
@@ -27,66 +28,68 @@ const DashboardPage: FC<Record<string, never>> = () => {
   const projExpiration = useAppSelector(projectExpirationFilter);
 
   return (
-    <Grid hasGutter>
-      <GridItem sm={12}>
-        <Header />
-      </GridItem>
-      <GridItem sm={12} md={4}>
-        <ItemList
-          title="Expired projects"
-          items={projExpiration.expiredItems}
-          showExpiration
-        />
-      </GridItem>
-      <GridItem sm={12} md={4}>
-        <ItemList
-          title="Projects expiring in a week"
-          items={projExpiration.expiringInWeek}
-          showExpiration
-        />
-      </GridItem>
-      <GridItem sm={12} md={4}>
-        <ItemList
-          title="Projects expiring in a month"
-          items={projExpiration.expiringInMonth}
-          showExpiration
-        />
-      </GridItem>
-      <GridItem sm={12} md={4}>
-        <ItemList
-          title="Expired documents"
-          items={docExpiration.expiredItems}
-          showExpiration
-        />
-      </GridItem>
-      <GridItem sm={12} md={4}>
-        <ItemList
-          title="Documents expiring in a week"
-          items={docExpiration.expiringInWeek}
-          showExpiration
-        />
-      </GridItem>
-      <GridItem sm={12} md={4}>
-        <ItemList
-          title="Documents expiring in a month"
-          items={docExpiration.expiringInMonth}
-          showExpiration
-        />
-      </GridItem>
-      <GridItem sm={12} md={6}>
-        <ItemList
-          title="Starred projects"
-          items={listItems('proj')}
-        />
-      </GridItem>
-      <GridItem sm={12} md={6}>
-        <ItemList
-          title="Starred documents"
-          items={listItems('doc')}
-        />
-      </GridItem>
-      <GridItem sm={12}></GridItem>
-    </Grid>
+    <Page
+      title="Dashboard"
+      description={<Header />}
+    >
+      <Grid hasGutter>
+        <GridItem sm={12} md={4}>
+          <ItemList
+            title="Expired projects"
+            items={projExpiration.expiredItems}
+            showExpiration
+          />
+        </GridItem>
+        <GridItem sm={12} md={4}>
+          <ItemList
+            title="Projects expiring in a week"
+            items={projExpiration.expiringInWeek}
+            showExpiration
+          />
+        </GridItem>
+        <GridItem sm={12} md={4}>
+          <ItemList
+            title="Projects expiring in a month"
+            items={projExpiration.expiringInMonth}
+            showExpiration
+          />
+        </GridItem>
+        <GridItem sm={12} md={4}>
+          <ItemList
+            title="Expired documents"
+            items={docExpiration.expiredItems}
+            showExpiration
+          />
+        </GridItem>
+        <GridItem sm={12} md={4}>
+          <ItemList
+            title="Documents expiring in a week"
+            items={docExpiration.expiringInWeek}
+            showExpiration
+          />
+        </GridItem>
+        <GridItem sm={12} md={4}>
+          <ItemList
+            title="Documents expiring in a month"
+            items={docExpiration.expiringInMonth}
+            showExpiration
+          />
+        </GridItem>
+        <GridItem sm={12} md={6}>
+          <ItemList
+            title="Starred projects"
+            items={listItems('proj')}
+          />
+        </GridItem>
+        <GridItem sm={12} md={6}>
+          <ItemList
+            title="Starred documents"
+            items={listItems('doc')}
+          />
+        </GridItem>
+        <GridItem sm={12}></GridItem>
+      </Grid>
+    </Page>
   );
 };
 
