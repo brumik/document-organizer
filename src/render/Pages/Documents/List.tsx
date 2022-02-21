@@ -5,14 +5,11 @@ import ListItem from "./Components/DocumentListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { documentsSelector } from "../../Utilities/stateSelectors";
 import TitleCard from "../../Utilities/TitleCard";
+import FilterToolbar from "../../Utilities/FilterToolbar";
 
-interface Props {
-  isArchived?: boolean;
-  isStarred?: boolean;
-}
-
-const List: FC<Props> = (props) => {
-  const keys = useAppSelector(documentsSelector(props)).map(d => d.slug) ?? [];
+const List: FC<Record<string, never>> = () => {
+  const filter = useAppSelector(state => state.filter);
+  const keys = useAppSelector(documentsSelector(filter)).map(d => d.slug) ?? [];
 
   return (
     <Stack hasGutter>
@@ -20,7 +17,9 @@ const List: FC<Props> = (props) => {
         <TitleCard
           title="Documents"
           description="You can find all your active documents on this page."
-        />
+        >
+          <FilterToolbar forType="doc" />
+        </TitleCard>
       </StackItem>
       <StackItem>
         <Gallery hasGutter>

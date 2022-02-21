@@ -35,6 +35,7 @@ import {
 } from "../../Utilities/stateSelectors";
 import SimpleLink from "../../Utilities/SimpleLink";
 import TitleCard from "../../Utilities/TitleCard";
+import { FilterStatus } from "../../store/filter/types";
 
 const DocumentForm: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug?: string };
@@ -53,7 +54,7 @@ const DocumentForm: FC<Record<string, never>> = () => {
 
 
   const projectDropdownOptions = 
-    useAppSelector(projectsSelector({ isArchived: false }))
+    useAppSelector(projectsSelector({ status: FilterStatus.active }))
       .map(({ slug, title }) => ({ value: slug, label: title }));
 
   const [form, setForm] = useState(editedDoc);

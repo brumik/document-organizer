@@ -9,13 +9,16 @@ import {
 } from "../../Utilities/stateSelectors";
 import ProjectListItem from "./Components/ProjectListItem";
 import AddListItem from "../../Utilities/AddListItem";
+import { FilterStatus } from "../../store/filter/types";
 
 const Show: FC<Record<string, never>> = () => {
   const { slug } = useParams() as { slug: string };
 
   const { isArchived } = useAppSelector(projectSelector(slug));
   const relatedDocuments = useAppSelector(
-    documentsSelector({ projectSlug: slug, isArchived })
+    documentsSelector({
+      projectSlug: slug,
+      status: isArchived ? FilterStatus.archived : FilterStatus.active })
   );
 
   return (

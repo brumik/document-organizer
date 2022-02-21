@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { FilterStatus } from "../../store/filter/types";
 import { useAppSelector } from "../../store";
 import {
   documentsSelector,
@@ -8,19 +9,19 @@ import TitleCard from "../../Utilities/TitleCard";
 
 const Header: FC<Record<string, never>> = () => {
   const docCount = useAppSelector(documentsSelector({
-    isArchived: false,
+    status: FilterStatus.active
   })).length;
 
   const projCount = useAppSelector(projectsSelector({
-    isArchived: false,
+    status: FilterStatus.active
   })).length;
 
   const docArchivedCount = useAppSelector(documentsSelector({
-    isArchived: true,
+    status: FilterStatus.archived
   })).length;
 
   const projArchivedCount = useAppSelector(projectsSelector({
-    isArchived: true,
+    status: FilterStatus.archived
   })).length;
 
   return (

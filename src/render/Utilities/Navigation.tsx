@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Nav, NavGroup, NavItem, NavItemSeparator, NavList } from '@patternfly/react-core';
+import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { Link, useMatch, useResolvedPath, LinkProps } from 'react-router-dom';
 
 interface CustomNavItemProps extends LinkProps {
@@ -22,16 +22,8 @@ const NavDefaultList: FC<Record<string, never>> = () => (
     <NavList>
       <CustomNavItem to="/">Main page</CustomNavItem>
       <CustomNavItem to="/settings">Settings</CustomNavItem>
-      <NavGroup title="Projects">
-        <CustomNavItem to="/project/starred">Starred</CustomNavItem>
-        <CustomNavItem to="/project">List</CustomNavItem>
-        <CustomNavItem to="/project/archive">Archive</CustomNavItem>
-      </NavGroup>
-      <NavGroup title="Documents">
-        <CustomNavItem to="/document/starred">Starred</CustomNavItem>
-        <CustomNavItem to="/document">List</CustomNavItem>
-        <CustomNavItem to="/document/archive">Archive</CustomNavItem>
-      </NavGroup>
+      <CustomNavItem to="/project">Projects</CustomNavItem>
+      <CustomNavItem to="/document">Documents</CustomNavItem>
     </NavList>
   </Nav>
 )

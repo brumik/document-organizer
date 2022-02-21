@@ -75,15 +75,11 @@ const App: FC<Record<string, never>> = () => {
       <PageSection isFilled>
         <Routes>
           <Route path="/" element={<DashboardPage />} />
-          <Route path="/project" element={<ProjList isArchived={false} />} />
-          <Route path="/project/starred" element={<ProjList isStarred isArchived={false} />} />
-          <Route path="/project/archive" element={<ProjList isArchived />} />
+          <Route path="/project" element={<ProjList />} />
           <Route path="/project/:slug" element={<ProjShow />} />
           <Route path="/project/:slug/edit" element={<ProjForm />} />
           <Route path="/project/new" element={<ProjForm />} />
-          <Route path="/document" element={<DocList isArchived={false} />} />
-          <Route path="/document/starred" element={<DocList isStarred isArchived={false} />} />
-          <Route path="/document/archive" element={<DocList isArchived />} />
+          <Route path="/document" element={<DocList />} />
           <Route path="/document/:slug/edit" element={<DocForm />} />
           <Route path="/document/new" element={<DocForm />} />
           <Route path="/settings" element={<SettingsPage />} />

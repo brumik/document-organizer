@@ -11,17 +11,16 @@ import {
   documentExpirationFilter,
   projectExpirationFilter
 } from "./helpers";
+import { FilterStatus } from "../../store/filter/types";
 
 const DashboardPage: FC<Record<string, never>> = () => {
   const listItems = (type: 'doc' | 'proj') => 
     type === 'doc'
       ? useAppSelector(documentsSelector({
-        isArchived: false,
-        isStarred: true,
+        status: FilterStatus.starred
       }))
       : useAppSelector(projectsSelector({
-        isArchived: false,
-        isStarred: true,
+        status: FilterStatus.starred
       }));
 
   const docExpiration = useAppSelector(documentExpirationFilter);

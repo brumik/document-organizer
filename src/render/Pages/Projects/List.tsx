@@ -5,14 +5,11 @@ import ListItem from "./Components/ProjectListItem";
 import AddListItem from "../../Utilities/AddListItem";
 import { projectsSelector } from "../../Utilities/stateSelectors";
 import TitleCard from "../../Utilities/TitleCard";
+import FilterToolbar from "../../Utilities/FilterToolbar";
 
-interface Props {
-  isArchived?: boolean;
-  isStarred?: boolean;
-}
-
-const List: FC<Props> = (props) => {
-  const keys = useAppSelector(projectsSelector(props)).map(p => p.slug);
+const List: FC<Record<string, never>> = () => {
+  const filter = useAppSelector(state => state.filter);
+  const keys = useAppSelector(projectsSelector(filter)).map(p => p.slug);
 
   return (
     <Stack hasGutter>
@@ -20,7 +17,9 @@ const List: FC<Props> = (props) => {
         <TitleCard
           title="Projects"
           description="You can find all your active projects on this page."
-        />
+        >
+          <FilterToolbar forType="proj"/>
+        </TitleCard>
       </StackItem>  
       <StackItem>
         <Gallery

@@ -3,15 +3,10 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] UI: Add the toolbar
-  * Toolbar where you can:
-    * Filter by tags, description, title
-    * isArchived, isStarred maybe as a side checkboxes/switches
-  * Allow bookmarking page with exact search
-  * It means the search should be in the URL
-* [ ] UI: Remove different starred and archived pages as it is doable form the toolbar
+* [ ] BUG: On startup it cannot find some documents on the disk
 
 Todos for later:
+* [ ] Allow bookmarking page with exact search
 * [x] Bug: Undeinfed project showing up with files without project
 * [ ] Revise no project documents -> let it be empty string and handle it in the backend
   * Update the dashboard redirect if we are allowing empty projects

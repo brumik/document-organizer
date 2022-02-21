@@ -33,6 +33,7 @@ import {
 } from "../../../Utilities/stateSelectors";
 import { ArchiveIcon, CalendarDayIcon, CopyIcon, StarIcon } from "@patternfly/react-icons";
 import SimpleLink from "../../../Utilities/SimpleLink";
+import { FilterStatus } from "../../../store/filter/types";
 
 interface Props {
   slug: string;
@@ -53,7 +54,9 @@ const ProjectListItem: FC<Props> = ({ slug }) => {
   } = project;
 
   const relatedDocuments = useAppSelector(
-    documentsSelector({ projectSlug: slug, isArchived })
+    documentsSelector({
+      projectSlug: slug,
+      status: isArchived ? FilterStatus.archived : FilterStatus.active })
   );
 
   const { request: deleteApi } = useApi(deleteProject, null);
