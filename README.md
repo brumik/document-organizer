@@ -6,15 +6,14 @@ Follow the list:
 * [ ] BUG: On startup it cannot find some documents on the disk
 
 Todos for later:
-* [ ] Allow bookmarking page with exact search
+* [ ] Add empty states to the pages when there is no item.
 * [x] Bug: Undeinfed project showing up with files without project
 * [ ] Revise no project documents -> let it be empty string and handle it in the backend
   * Update the dashboard redirect if we are allowing empty projects
 * [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
 * [ ] Revise how to archive documents (active project archived documet -> project not in archive, inside project folder an archive folder where the document would be)
-* [ ] Add empty states to the pages when there is no item.
-* [ ] Remove the add new fields from the starred and archived pages
 * [ ] Search bar for tags, names and all
+* [ ] Allow bookmarking page with exact search
 * [ ] Slugs => allow for edit or add a subfix for cases where the Title is the same but the user wants to save it still (maybe different folder)
 * [ ] Optimize reloadAll() function to ask for specific parts of DB.
 * [ ] Check the `catch` blocks in the backed what they can return and replace them with string
