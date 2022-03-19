@@ -28,4 +28,16 @@ Todos for later:
 Docs/distribution setup:
 * [x] repo, private, name?
 * [ ] versioning possibilities?
+* [ ] Publishing: Create snap in GH CI
 * [ ] move the remaining task after initial setup to GH issues, follow some commit convention
+* [ ] Lets version it with scematic release
+  * [ ] Set up the initial scematic release and test it on seomthing easy
+* [x] Reasearch how to publish it in any other form
+  * Linux pacakges can be built on linux only - AppImage (preferred as it has auto update), debian, zip, ?snap?
+  * Windows pacakges can be generated only on windows, at least the squirell ones, we should trie to use the `electron-builder` maybe to generate NSIS installer
+  * MacOS (DMG)
+  * Github actions can run on windows too, so theoretically we can build and publish it from there, in one action for linux, in other for windows
+    * The workflow can publish to github artifacts, which could be a debian pacakge, zip or exe files. This could be done without signing anything
+  * On long run we need to buy singning certificate and use that one to publish the packages.
+  * Electron has auto update for: AppImage on linux, DMG, NSIS (Windows)
+    * Needs: signed app fro MacOs
