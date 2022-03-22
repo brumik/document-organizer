@@ -6,7 +6,7 @@ import {
   PageSidebar,
 } from "@patternfly/react-core";
 import Navigation from "./Utilities/Navigation";
-import logo from "./logo.png";
+import logo from "./logo_512x512.png";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import SettingsPage from "./Pages/Settings";
