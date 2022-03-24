@@ -22,12 +22,12 @@ const Show: FC<Record<string, never>> = () => {
   );
 
   return (
-    <Stack hasGutter>
+    <Stack>
       <StackItem>
         <ProjectListItem slug={slug} />
       </StackItem>
       <StackItem>
-        <Gallery hasGutter>
+        <Gallery hasGutter style={{ padding: '24px' }}>
           <AddListItem title="Add new document" url="/document/new" />
           {relatedDocuments.map((document) => (
             <GalleryItem key={document.slug}>
