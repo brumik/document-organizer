@@ -68,6 +68,7 @@ class ProjectStore extends BaseStore<Project> {
       await promises.rm(this.getPath(slug, true), { recursive: true, force: true });
       this.updateData(this.data.filter(p => p.slug !== slug));
 
+
       return Promise.resolve();
     } catch (e) {
       return Promise.reject(e);

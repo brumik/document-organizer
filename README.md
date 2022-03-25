@@ -5,9 +5,9 @@ A desktop electron app to help you stay on top of your documents
 Follow the list:
 * [ ] Revise no project documents -> let it be empty string and handle it in the backend
   * Update the dashboard redirect if we are allowing empty projects
-* [ ] Revise how to delete projects (delete projects with all the files)
 * [ ] Check the `catch` blocks in the backed what they can return and replace them with string
 * [ ] Add new project from project show page should set the project selection to the opened project
+* [ ] Bug: On opening the folder/file a notification blinks shortly
 
 Todos for later:
 * [ ] Optimize reloadAll() function to ask for specific parts of DB.

@@ -54,7 +54,16 @@ const updateProject: InvokeFunction<IP.UpdateProject> = (_mainWindow, _event, me
 };
 
 const deleteProject: InvokeFunction<IP.DeleteProject> = (_mainWindow, _event, message) => {
-  return promiseResolver(global.projectStore.remove(message.slug));
+  const documents = global.documentStore.all.filter(doc => doc.projectSlug === message.slug);
+  try {
+    documents.forEach(doc => global.documentStore.remove(doc.slug));
+    return promiseResolver(global.projectStore.remove(message.slug));
+  } catch (e) {
+    return Promise.resolve({
+      error: true,
+      payload: e as string
+    })
+  }
 };
 
 const archiveProject: InvokeFunction<IP.ArchiveProject> = (_mainWindow, _event, message) => {
