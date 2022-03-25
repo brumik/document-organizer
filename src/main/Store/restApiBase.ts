@@ -29,7 +29,7 @@ class RestApiBase<T extends Database> extends Store<T[]> {
     return this.data.find(item => item.slug === slug);
   }
 
-  protected existsOnDisk(slug: string, archived = false): boolean {
+  protected existsOnDisk(slug: string, archived?: boolean): boolean {
     return fs.existsSync(this.getPath(slug, archived));
   }
 

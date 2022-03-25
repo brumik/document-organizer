@@ -41,6 +41,7 @@ export namespace InvokePayloads {
   export interface DeleteDocument { slug: string };
   export interface ArchiveDocument { slug: string, isArchived: boolean };
   export interface OpenDocument { slug: string };
+  export interface ShowDocumentInFolder { slug: string };
   export type ImportDatabase = Record<string, never>;
   export type ExportDatabase = Record<string, never>;
 }

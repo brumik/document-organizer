@@ -21,6 +21,9 @@ export const archiveDocument = (args: IP.ArchiveDocument) =>
 export const openDocument = (args: IP.OpenDocument) =>
   window.api.database.invoke('openDocument', args);
 
+export const showDocumentInFolder = (args: IP.ShowDocumentInFolder) =>
+  window.api.database.invoke('showDocumentInFolder', args);
+
 export const toggleDocumentStar = (args: { document: Document }) =>
   updateDocument({
     oldSlug: args.document.slug,

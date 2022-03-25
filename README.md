@@ -3,12 +3,9 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] BUG: On startup it cannot find some documents on the disk
-* [x] BUG: Project details document list has no margins left
 * [ ] Revise no project documents -> let it be empty string and handle it in the backend
   * Update the dashboard redirect if we are allowing empty projects
-* [ ] Revise how to delete projects (do I want to delete the files too or make the documents parentless)
-* [ ] Revise how to archive documents (active project archived documet -> project not in archive, inside project folder an archive folder where the document would be)
+* [ ] Revise how to delete projects (delete projects with all the files)
 * [ ] Check the `catch` blocks in the backed what they can return and replace them with string
 * [ ] Add new project from project show page should set the project selection to the opened project
 

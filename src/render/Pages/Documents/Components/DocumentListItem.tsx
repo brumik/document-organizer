@@ -25,6 +25,7 @@ import {
   useApi,
   deleteDocument,
   openDocument,
+  showDocumentInFolder,
   archiveDocument,
   toggleDocumentStar,
   openProject,
@@ -58,7 +59,7 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
 
   const { request: deleteApi } = useApi(deleteDocument, null);
   const { request: openApi } = useApi(openDocument, null);
-  const { request: showApi } = useApi(openProject, null);
+  const { request: showApi } = useApi(showDocumentInFolder, null);
   const { request: archiveApi } = useApi(archiveDocument, null);
   const { request: starApi } = useApi(toggleDocumentStar, null);
 
@@ -160,7 +161,7 @@ const DocumentListItem: FC<Props> = ({ slug }) => {
             </SimpleLink>
           </SplitItem>
           <SplitItem>
-            <SimpleLink onClick={() => showApi({ slug: projectSlug })}>
+            <SimpleLink onClick={() => showApi({ slug })}>
               Show in files
             </SimpleLink>
           </SplitItem>

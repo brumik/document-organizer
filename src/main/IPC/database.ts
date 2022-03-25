@@ -3,6 +3,7 @@ import IPC from "./general/icp";
 import { BrowserWindow, dialog, shell } from "electron";
 import namespacedSend from "./general/sendHelper";
 import copyDirectory from './copyDirectory'
+import { dirname } from 'path';
 
 // Import types
 import { InvokePayloads as IP } from "../../types";
@@ -150,6 +151,21 @@ const openDocument: InvokeFunction<IP.OpenDocument> = async (_mainWindow, _event
     });
 };
 
+const showDocumentInFolder: InvokeFunction<IP.ShowDocumentInFolder> = async (_mainWindow, _event, message) => {
+  const folderPath = dirname(global.documentStore.getPath(message.slug));
+  const errorStr = await shell.openPath(folderPath);
+  if (errorStr)
+    return Promise.resolve({
+      error: true,
+      payload: errorStr
+    });
+  else
+    return Promise.resolve({
+      error: false,
+      payload: undefined
+    });
+};
+
 const exportDatabase: InvokeFunction<IP.ExportDatabase> = (mainWindow, _event, _message) => {
   const rootPath = dialog.showOpenDialogSync(mainWindow, {
     title: 'Export database',
@@ -233,6 +249,7 @@ const database = new IPC({
     deleteDocument,
     archiveDocument,
     openDocument,
+    showDocumentInFolder,
     exportDatabase,
     importDatabase,
   },
