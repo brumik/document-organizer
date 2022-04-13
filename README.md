@@ -3,15 +3,12 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] Revise no project documents -> let it be empty string and handle it in the backend
-  * Update the dashboard redirect if we are allowing empty projects
 * [ ] Check the `catch` blocks in the backed what they can return and replace them with string
-* [ ] Add new project from project show page should set the project selection to the opened project
 * [ ] Bug: On opening the folder/file a notification blinks shortly
 
 Todos for later:
+* [ ] Add new project from project show page should set the project selection to the opened project
 * [ ] Optimize reloadAll() function to ask for specific parts of DB.
-* [ ] App update distribution, we don't want to download all the time a new exe, right?
 * [ ] Slugs => allow for edit or add a subfix for cases where the Title is the same but the user wants to save it still (maybe different folder)
 * [ ] Global search bar (just text probably)
 * [ ] Allow bookmarking page with exact search

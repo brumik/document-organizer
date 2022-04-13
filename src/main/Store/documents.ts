@@ -32,6 +32,11 @@ class DocumentStore extends BaseStore<Document> {
       return Promise.reject(`Document ${document.slug} already exists.`);
     }
 
+    if (!document.projectSlug) {
+      return Promise.reject('The project field cannot be left empty.\
+        Maybe create a "No Project" to store documents without any projects.');
+    }
+
     try {
       await promises.copyFile(originFile, this.getPath(document));
       this.updateData([...this.data, document]);

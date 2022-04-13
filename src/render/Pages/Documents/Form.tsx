@@ -174,6 +174,28 @@ const DocumentForm: FC<Record<string, never>> = () => {
                     Show file
                   </SimpleLink>
                 </p>)}
+                <FormGroup label="Project" fieldId="project">
+                  <FormSelect
+                    value={form.projectSlug}
+                    onChange={projectDropdownOnChange}
+                    aria-label="FormSelect Input"
+                    isRequired
+                  >
+                    <FormSelectOption
+                      isPlaceholder
+                      key="no-project"
+                      value=""
+                      label="Please select a project"
+                    />
+                    {projectDropdownOptions.map((option) => (
+                      <FormSelectOption
+                        key={option.value}
+                        value={option.value}
+                        label={option.label}
+                      />
+                    ))}
+                  </FormSelect>
+                </FormGroup>
               </Form>
             </CardBody>
           </Card>
@@ -202,26 +224,6 @@ const DocumentForm: FC<Record<string, never>> = () => {
                     value={form.tags.join(',')}
                     onChange={(value) => setForm({ ...form, tags: value ? value.split(',') : [] })}
                   />
-                </FormGroup>
-                <FormGroup label="Project" fieldId="project">
-                  <FormSelect
-                    value={form.projectSlug}
-                    onChange={projectDropdownOnChange}
-                    aria-label="FormSelect Input"
-                  >
-                    <FormSelectOption
-                      key="no-project"
-                      value="./"
-                      label="No project"
-                    />
-                    {projectDropdownOptions.map((option) => (
-                      <FormSelectOption
-                        key={option.value}
-                        value={option.value}
-                        label={option.label}
-                      />
-                    ))}
-                  </FormSelect>
                 </FormGroup>
                 <FormGroup label="Expiration Date" fieldId="expiration-date">
                   <InputGroup>
