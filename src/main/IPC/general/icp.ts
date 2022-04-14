@@ -38,23 +38,23 @@ export default class IPC {
     return {
       send: (channel: string, message: any): void => {
         if (this.validSendChannel[channel]) {
-          console.log(`[Log] Send channel active: ${channel}`, message);
+          console.info(`Send channel active: ${channel}`, message);
           ipcRenderer.send(`${this.nameAPI}.${channel}`, message);
         } else {
-          console.log(`[Error] Invalid send channel name: ${channel}`);
+          console.error(`Invalid send channel name: ${channel}`);
         }
       },
       receive: (channel: string, callback: Function): void => {
         if (this.validReceiveChannel.includes(channel)) {
-          console.log(`[Log] Receive channel active: ${channel}`);
+          console.info(`Receive channel active: ${channel}`);
           ipcRenderer.on(`${this.nameAPI}.${channel}`, (_event, ...args) => callback(...args));
         } else {
-          console.log(`[Error] Invalid receive channel name: ${channel}`);
+          console.error(`Invalid receive channel name: ${channel}`);
         }
       },
       invoke: (channel: string, message: any): Promise<void> => {
         if (Object.keys(this.validHandleChannel).includes(channel)) {
-          console.log(`[Log] Invoke channel active: ${channel}`, message);
+          console.info(`Invoke channel active: ${channel}`, message);
           return ipcRenderer.invoke(`${this.nameAPI}.${channel}`, message)
             .then(data => {
               if (data.error) {
@@ -64,7 +64,7 @@ export default class IPC {
               }
             });
         } else {
-          console.log(`[Error] Invalid invoke channel name: ${channel}`);
+          console.error(`Invalid invoke channel name: ${channel}`);
           return Promise.reject(`Invalid invoke channel name: ${channel}`);
         }
       },

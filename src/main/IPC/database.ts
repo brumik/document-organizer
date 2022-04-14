@@ -211,8 +211,6 @@ const importDatabase: InvokeFunction<IP.ImportDatabase> = (mainWindow, _event, _
 
   if (rootPath) {
     try {
-      // We don't want to delete everything in that folder.
-      // fs.rmSync(global.preferencesStore.rootFolder, { recursive: true });
       copyDirectory(rootPath[0], global.preferencesStore.rootFolder);
 
       global.projectStore.reloadFromDisk();
@@ -231,7 +229,7 @@ const importDatabase: InvokeFunction<IP.ImportDatabase> = (mainWindow, _event, _
   } else {
     return Promise.resolve({
       error: true,
-      payload: 'Export cancelled.'
+      payload: 'Import cancelled.'
     });
   }
 };

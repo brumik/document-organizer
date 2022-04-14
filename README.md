@@ -3,8 +3,8 @@ A desktop electron app to help you stay on top of your documents
 
 ## TODO
 Follow the list:
-* [ ] Check the `catch` blocks in the backed what they can return and replace them with string
-* [ ] Bug: On opening the folder/file a notification blinks shortly
+  * [ ] Write proper readme
+  * [ ] Move the issues to GH
 
 Todos for later:
 * [ ] Add new project from project show page should set the project selection to the opened project

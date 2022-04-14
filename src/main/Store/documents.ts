@@ -43,7 +43,8 @@ class DocumentStore extends BaseStore<Document> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Creating document ${document.slug} failed.`);
     }
   }
 
@@ -63,7 +64,8 @@ class DocumentStore extends BaseStore<Document> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Updating document ${oldSlug} failed.`);
     }
   }
 
@@ -78,7 +80,8 @@ class DocumentStore extends BaseStore<Document> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Deleting document ${slug} failed.`);
     }
   }
 
@@ -89,7 +92,13 @@ class DocumentStore extends BaseStore<Document> {
     }
 
     const futurePath = isArchived ? this.archivePath : this.basePath;
-    this.ensureDirExists(path.join(futurePath, document.projectSlug));
+    const p = path.join(futurePath, document.projectSlug);
+    try {
+      this.ensureDirExists(p);
+    } catch (e) {
+      console.error(e);
+      return Promise.reject(`Was not able to ensure that that the directory "${p}" exists.`);
+    }
 
     try {
       await promises.rename(this.getPath(slug), this.getPath(slug, isArchived));
@@ -99,7 +108,8 @@ class DocumentStore extends BaseStore<Document> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Archiving document ${slug} failed.`);
     }
   }
 

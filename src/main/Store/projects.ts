@@ -34,7 +34,8 @@ class ProjectStore extends BaseStore<Project> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Creating "${project.title}" failed.`);
     }
   }
 
@@ -54,7 +55,8 @@ class ProjectStore extends BaseStore<Project> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Updating "${oldSlug}" failed.`);
     }
   }
 
@@ -71,7 +73,8 @@ class ProjectStore extends BaseStore<Project> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e);
+      return Promise.reject(`Deleting the project "${slug}" failed.`);
     }
   }
 
@@ -80,7 +83,12 @@ class ProjectStore extends BaseStore<Project> {
       return Promise.reject(`Cannot archive project: ${slug} does not exist.`);
     }
 
-    this.ensureDirExists(this.getPath(slug, isArchived));
+    try {
+      this.ensureDirExists(this.getPath(slug, isArchived));
+    } catch (e) {
+      console.error(e);
+      return Promise.reject(`Was not able to ensure that that the directory "${this.getPath, isArchived}" exists.`);
+    }
 
     try {
       await promises.rmdir(this.getPath(slug));
@@ -88,7 +96,8 @@ class ProjectStore extends BaseStore<Project> {
 
       return Promise.resolve();
     } catch (e) {
-      return Promise.reject(e);
+      console.error(e)
+      return Promise.reject(`Archiving the project "${slug}" failed.`);
     }
   }
 
