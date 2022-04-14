@@ -1,6 +1,6 @@
 {
   "name": "document-organizer",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "A basic application for organizing your documents.",
   "repository": "github:brumik/document-organizer",
   "main": ".webpack/main",
@@ -8,7 +8,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "lint": "eslint --ext .ts,.tsx .",
-    "app:dist": "electron-builder",
+    "app:dist": "yarn package && rm -rf ./dist && electron-builder",
     "app:publish:snap": "yarn app:dist && snapcraft upload --release=stable ./dist/document-organizer-latest.snap"
   },
   "keywords": [
