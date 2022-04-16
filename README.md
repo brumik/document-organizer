@@ -1,6 +1,8 @@
 # Document organizer
 A desktop electron app to help you stay on top of your documents
 
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/document-organizer)
+
 ## Install from the snap store
 * `snap install document-organizer`
 

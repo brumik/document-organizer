@@ -6,9 +6,9 @@
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package",
+    "build": "electron-forge package",
     "lint": "eslint --ext .ts,.tsx .",
-    "app:dist": "yarn package && rm -rf ./dist && electron-builder",
+    "app:dist": "yarn build && rm -rf ./dist && electron-builder",
     "app:publish:snap": "yarn app:dist && snapcraft upload --release=stable ./dist/document-organizer-latest.snap"
   },
   "keywords": [
@@ -30,6 +30,10 @@
       "category": "Utility",
       "target": "snap",
       "icon": "./src/render/logo_512x512.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "./src/render/logo_512x512.ico"
     }
   },
   "config": {
