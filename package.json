@@ -1,6 +1,6 @@
 {
   "name": "document-organizer",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "A basic application for organizing your documents.",
   "repository": "github:brumik/document-organizer",
   "main": ".webpack/main",
