@@ -39,22 +39,10 @@ class Store<T> {
     fs.writeFileSync(this.path, JSON.stringify(this.data), 'utf8');
   }
 
-  protected movePath(newPath: string) {
-    this.path = newPath;
-    this.data = parseDataFile(this.path, this.data);
-  }
-
   public move(to: string) {
     const newPath = path.join(to, this.configName);
-    fs.promises.access(this.path).then(() => {
-      fs.promises.rename(this.path, newPath).then(() => {
-        this.movePath(newPath);
-      }).catch(e => {
-        console.error('No access to the new path.', e);
-      });
-    }).catch(e => {
-      console.error('No access to the old path.', e);
-    })
+    this.path = newPath;
+    this.data = parseDataFile(this.path, this.data);
   }
 
   public reloadFromDisk() {

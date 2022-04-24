@@ -3,6 +3,7 @@ import IPC from "./general/icp";
 import namespacedSend from "./general/sendHelper";
 import { BrowserWindow, dialog } from "electron";
 import copyDirectory from "./copyDirectory";
+import fs from "fs";
 
 const nameAPI = "settings";
 const send = namespacedSend(nameAPI);
@@ -17,11 +18,28 @@ const setRootFolder = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent,
     properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
   });
 
-  if (rootPath) {
-    global.projectStore.move(rootPath[0]);
-    global.documentStore.move(rootPath[0]);
-    copyDirectory(global.preferencesStore.rootFolder, rootPath[0]);
-    global.preferencesStore.rootFolder = rootPath[0];
+  if (rootPath && rootPath?.length > 0) {
+    const fromDir = global.preferencesStore.rootFolder;
+    const toDir = rootPath[0];
+
+    try {
+      // Move the dbs
+      global.projectStore.move(toDir);
+      global.documentStore.move(toDir);
+
+      // Move the files (copy and delete)
+      copyDirectory(fromDir, toDir);
+      fs.rmSync(fromDir, { recursive: true });
+
+      // Set in the settings the new root folder
+      global.preferencesStore.rootFolder = toDir;
+    } catch (error) {
+      console.error(error);
+      dialog.showErrorBox(
+        'Error while moving the root folder.',
+        'An error occured while moving the files, more details in the console.'
+      );
+    }
   }
 
   send(mainWindow, "getAll", global.preferencesStore.all);
