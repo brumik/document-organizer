@@ -5,11 +5,11 @@
   "repository": "github:brumik/document-organizer",
   "main": ".webpack/main",
   "scripts": {
+    "clean": "rm -rf dist .webpack",
     "start": "electron-forge start",
-    "build": "electron-forge package",
+    "build": "yarn clean && electron-forge package",
     "lint": "eslint --ext .ts,.tsx .",
-    "app:dist": "yarn build && rm -rf ./dist && electron-builder",
-    "app:publish:snap": "yarn app:dist && snapcraft upload --release=stable ./dist/document-organizer-latest.snap"
+    "app:dist": "yarn build && electron-builder"
   },
   "keywords": [
     "document",
@@ -23,22 +23,25 @@
   },
   "license": "MIT",
   "build": {
-    "artifactName": "document-organizer-latest.${ext}",
     "appId": "me.berky.levente.document-organizer",
     "productName": "Document Organizer",
     "linux": {
       "category": "Utility",
-      "target": "snap",
+      "publish": "github",
+      "target": [
+        "snap",
+        "AppImage"
+      ],
       "icon": "./src/render/logo_512x512.png"
     },
     "win": {
+      "publish": "github",
       "target": "nsis",
-      "icon": "./src/render/logo_512x512.ico"
+      "icon": "./src/render/logo_512x512.png"
     }
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
       "plugins": [
         [
           "@electron-forge/plugin-webpack",
@@ -96,6 +99,7 @@
     "@patternfly/react-core": "^4.175.4",
     "@patternfly/react-icons": "^4.26.4",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^5.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
