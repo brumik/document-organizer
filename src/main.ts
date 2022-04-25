@@ -6,11 +6,6 @@ import ProjectStore from './main/Store/projects';
 import DocumentStore from './main/Store/documents';
 import PreferencesStore from './main/Store/preferences';
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
-  app.quit();
-}
-
 global.preferencesStore = new PreferencesStore({
   configName: 'user-preferences',
 });
