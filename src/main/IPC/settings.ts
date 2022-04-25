@@ -2,7 +2,6 @@ import { SendChannels } from "./general/channelsInterface";
 import IPC from "./general/icp";
 import namespacedSend from "./general/sendHelper";
 import { BrowserWindow, dialog } from "electron";
-import fs from "fs";
 
 const nameAPI = "settings";
 const send = namespacedSend(nameAPI);
@@ -18,24 +17,10 @@ const setRootFolder = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent,
   });
 
   if (rootPath && rootPath?.length > 0) {
-    const fromDir = global.preferencesStore.rootFolder;
     const toDir = rootPath[0];
-
-    try {
-      // Move the files
-      fs.renameSync(fromDir, toDir);
-
-      // Set in the settings the new root folder
-      global.projectStore.setPath(toDir);
-      global.documentStore.setPath(toDir);
-      global.preferencesStore.rootFolder = toDir;
-    } catch (error) {
-      console.error(error);
-      dialog.showErrorBox(
-        'Error while moving the root folder.',
-        'An error occured while moving the files, more details in the console.'
-      );
-    }
+    global.projectStore.setPath(toDir);
+    global.documentStore.setPath(toDir);
+    global.preferencesStore.rootFolder = toDir;
   }
 
   send(mainWindow, "getAll", global.preferencesStore.all);

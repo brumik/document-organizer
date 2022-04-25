@@ -1,5 +1,5 @@
 import Main from './main/mainWindow';
-import { app, ipcMain } from 'electron';
+import { ipcMain } from 'electron';
 import settings from './main/IPC/settings';
 import database from './main/IPC/database';
 import ProjectStore from './main/Store/projects';

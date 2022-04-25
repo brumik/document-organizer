@@ -16,6 +16,7 @@ class Store<T> {
   protected data: T;
   protected configName: string;
   protected basePath: string;
+  protected defaults: T;
 
   constructor(params: {
     rootFolder?: string,
@@ -25,13 +26,14 @@ class Store<T> {
     this.configName = params.configName + '.json';
     this.basePath = params.rootFolder ?? electron.app.getPath('userData');
     this.path = path.join(this.basePath, this.configName);
+    this.defaults = params.defaults;
 
     // Create the directory if it doesn't exist
     if (!fs.existsSync(this.basePath)) {
       fs.mkdirSync(this.basePath, { recursive: true });
     }
 
-    this.data = parseDataFile(this.path, params.defaults);
+    this.data = parseDataFile(this.path, this.defaults);
   }
 
   protected updateData(data: T) {
@@ -42,11 +44,11 @@ class Store<T> {
   public setPath(to: string) {
     const newPath = path.join(to, this.configName);
     this.path = newPath;
-    this.data = parseDataFile(this.path, this.data);
+    this.data = parseDataFile(this.path, this.defaults);
   }
 
   public reloadFromDisk() {
-    this.data = parseDataFile(this.path, this.data);
+    this.data = parseDataFile(this.path, this.defaults);
   }
 
   public get all() {

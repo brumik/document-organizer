@@ -21,6 +21,7 @@ const reducer = (
   switch (action.type) {
     case Action.setRootFolder:
       window.api.settings.send('setRootFolder');
+      window.api.database.send('requestAll');
       return state;
     case Action.sync:
       return action.payload;
