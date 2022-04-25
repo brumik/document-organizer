@@ -37,11 +37,21 @@ import SimpleLink from "../../Utilities/SimpleLink";
 import { FilterStatus } from "../../store/filter/types";
 import Page from "../../Utilities/Page";
 
+interface QueryParams {
+  slug?: string;        // OR
+  projectSlug?: string; // OR
+}
+
 const DocumentForm: FC<Record<string, never>> = () => {
-  const { slug } = useParams() as { slug?: string };
+  const { slug, projectSlug } = useParams() as QueryParams;
   const navigate = useNavigate();
 
   const editedDoc = useAppSelector(documentSelector(slug ?? ''));
+  // If the edited doc is a new one and we have project slug set it as default.
+  if (projectSlug && editedDoc.projectSlug === '') {
+    editedDoc.projectSlug = projectSlug;
+  };
+
 
   const { request: addApi, isSuccess: addSuccess } = useApi(addNewDocument, null);
   const { request: updateApi, isSuccess: updateSuccess } = useApi(updateDocument, null);

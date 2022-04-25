@@ -28,7 +28,7 @@ const Show: FC<Record<string, never>> = () => {
       </StackItem>
       <StackItem>
         <Gallery hasGutter style={{ padding: '24px' }}>
-          <AddListItem title="Add new document" url="/document/new" />
+          <AddListItem title="Add new document" url={`/document/new/${slug}`} />
           {relatedDocuments.map((document) => (
             <GalleryItem key={document.slug}>
               <DocumentListItem slug={document.slug} />

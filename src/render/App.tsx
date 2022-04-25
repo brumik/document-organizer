@@ -80,7 +80,10 @@ const App: FC<Record<string, never>> = () => {
         <Route path="/project/new" element={<ProjForm />} />
         <Route path="/document" element={<DocList />} />
         <Route path="/document/:slug/edit" element={<DocForm />} />
-        <Route path="/document/new" element={<DocForm />} />
+        <Route path="/document/new">
+          <Route index element={<DocForm />} />
+          <Route path=":projectSlug" element={<DocForm />} />
+        </Route>
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </Page>
