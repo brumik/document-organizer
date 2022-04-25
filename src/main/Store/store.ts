@@ -39,7 +39,7 @@ class Store<T> {
     fs.writeFileSync(this.path, JSON.stringify(this.data), 'utf8');
   }
 
-  public move(to: string) {
+  public setPath(to: string) {
     const newPath = path.join(to, this.configName);
     this.path = newPath;
     this.data = parseDataFile(this.path, this.data);

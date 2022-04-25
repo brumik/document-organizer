@@ -2,7 +2,6 @@ import { SendChannels } from "./general/channelsInterface";
 import IPC from "./general/icp";
 import namespacedSend from "./general/sendHelper";
 import { BrowserWindow, dialog } from "electron";
-import copyDirectory from "./copyDirectory";
 import fs from "fs";
 
 const nameAPI = "settings";
@@ -23,15 +22,12 @@ const setRootFolder = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent,
     const toDir = rootPath[0];
 
     try {
-      // Move the dbs
-      global.projectStore.move(toDir);
-      global.documentStore.move(toDir);
-
-      // Move the files (copy and delete)
-      copyDirectory(fromDir, toDir);
-      fs.rmSync(fromDir, { recursive: true });
+      // Move the files
+      fs.renameSync(fromDir, toDir);
 
       // Set in the settings the new root folder
+      global.projectStore.setPath(toDir);
+      global.documentStore.setPath(toDir);
       global.preferencesStore.rootFolder = toDir;
     } catch (error) {
       console.error(error);
