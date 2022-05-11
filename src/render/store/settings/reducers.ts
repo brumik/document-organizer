@@ -5,7 +5,9 @@ import {
 } from './types';
 
 const initialState: State = {
-  rootFolder: '',
+  rootUserFolder: '',
+  notificationEnabled: false,
+  notificationSupported: false,
   windowBounds: {
     x: 0,
     y: 0,
@@ -21,7 +23,12 @@ const reducer = (
   switch (action.type) {
     case Action.setRootFolder:
       window.api.settings.send('setRootFolder');
-      window.api.database.send('requestAll');
+      return state;
+    case Action.toggleNotificationEnabled:
+      window.api.settings.send('setNotificationEnabled', { enabled: !state.notificationEnabled });
+      return state;
+    case Action.sendTestNotification:
+      window.api.settings.send('sendTestNotification');
       return state;
     case Action.sync:
       return action.payload;
