@@ -1,5 +1,5 @@
 import Main from './main/mainWindow';
-import { ipcMain } from 'electron';
+import { ipcMain, Notification } from 'electron';
 import settings from './main/IPC/settings';
 import database from './main/IPC/database';
 import ProjectStore from './main/Store/projects';
@@ -11,12 +11,12 @@ global.preferencesStore = new PreferencesStore({
 });
 
 global.projectStore = new ProjectStore({
-  rootFolder: global.preferencesStore.rootFolder,
+  rootFolder: global.preferencesStore.rootUserFolder,
   configName: 'projects-db',
 });
 
 global.documentStore = new DocumentStore({
-  rootFolder: global.preferencesStore.rootFolder,
+  rootFolder: global.preferencesStore.rootUserFolder,
   configName: 'documents-db',
 });
 

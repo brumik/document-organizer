@@ -11,18 +11,25 @@ import {
   GridItem,
   InputGroup,
   TextInput,
+  Switch
 } from "@patternfly/react-core";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setRootFolder } from "../store/settings";
+import {
+  sendTestNotification,
+  setRootFolder,
+  toggleNotificationEnabled
+} from "../store/settings";
 import {
   useApi,
   importDatabase,
-  exportDatabase
+  exportDatabase,
 } from '../api';
 import Page from "../Utilities/Page";
 
 const SettingsPage: FC<Record<string, never>> = () => {
-  const rootFolder = useAppSelector(state => state.settings.rootFolder);
+  const rootFolder = useAppSelector(state => state.settings.rootUserFolder);
+  const notificationSupported = useAppSelector(state => state.settings.notificationSupported);
+  const notificationEnabled = useAppSelector(state => state.settings.notificationEnabled);
   const dispatch = useAppDispatch();
 
   const { request: importApi, ...restImportDatabase } = useApi(importDatabase, null);
@@ -67,6 +74,32 @@ const SettingsPage: FC<Record<string, never>> = () => {
                     Import database
                   </Button>
                 </FormGroup>
+              </Form>
+            </CardBody>
+          </Card>
+        </GridItem>
+        <GridItem span={12}>
+          <Card>
+            <CardTitle>Notifications</CardTitle>
+            <CardBody>
+              <Form>
+              <Switch
+                id="notification-switch"
+                label="Notifications are enabled"
+                labelOff={
+                  notificationSupported
+                  ? "Notifications are disabled"
+                  : "Notifications are not supported on your system."
+                }
+                isDisabled={!notificationSupported}
+                isChecked={notificationEnabled}
+                onChange={() => dispatch(toggleNotificationEnabled())}
+              />
+              {notificationSupported && notificationEnabled && (
+                <Button id="notification-test" onClick={() => dispatch(sendTestNotification())}>
+                  Send a test notification
+                </Button>  
+              )}
               </Form>
             </CardBody>
           </Card>

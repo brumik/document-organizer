@@ -6,7 +6,7 @@ export type HandleChannelReturn = {
   payload: PromiseErrorFormat;
 } | {
   error: false;
-  payload: undefined | string;
+  payload: any;
 }
 
 type HandleChannelFunction = (
@@ -35,3 +35,9 @@ export interface APIChannels {
   validReceiveChannel: string[],
   validHandleChannel: HandleChannels,
 }
+
+export type InvokeFunction<T> = (
+  mainWindow: BrowserWindow,
+  event: Electron.IpcMainInvokeEvent,
+  message: T
+) => Promise<HandleChannelReturn>;

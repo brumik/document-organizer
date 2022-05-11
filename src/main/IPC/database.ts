@@ -1,4 +1,7 @@
-import { HandleChannelReturn } from "./general/channelsInterface";
+import {
+  HandleChannelReturn,
+  InvokeFunction
+} from "./general/channelsInterface";
 import IPC from "./general/icp";
 import { BrowserWindow, dialog, shell } from "electron";
 import namespacedSend from "./general/sendHelper";
@@ -7,8 +10,6 @@ import { dirname } from 'path';
 
 // Import types
 import { InvokePayloads as IP } from "../../types";
-
-type InvokeFunction<T> = (mainWindow: BrowserWindow, event: Electron.IpcMainInvokeEvent, message: T) => Promise<HandleChannelReturn>;
 
 const promiseResolver = async (fnc: Promise<void>): Promise<HandleChannelReturn> => {
   try {
@@ -178,13 +179,13 @@ const showDocumentInFolder: InvokeFunction<IP.ShowDocumentInFolder> = async (_ma
 const exportDatabase: InvokeFunction<IP.ExportDatabase> = (mainWindow, _event, _message) => {
   const rootPath = dialog.showOpenDialogSync(mainWindow, {
     title: 'Export database',
-    defaultPath: global.preferencesStore.rootFolder,
+    defaultPath: global.preferencesStore.rootUserFolder,
     properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
   });
 
   if (rootPath) {
     try {
-      copyDirectory(global.preferencesStore.rootFolder, rootPath[0]);
+      copyDirectory(global.preferencesStore.rootUserFolder, rootPath[0]);
       return Promise.resolve({
         error: false,
         payload: undefined
@@ -211,7 +212,7 @@ const importDatabase: InvokeFunction<IP.ImportDatabase> = (mainWindow, _event, _
 
   if (rootPath) {
     try {
-      copyDirectory(rootPath[0], global.preferencesStore.rootFolder);
+      copyDirectory(rootPath[0], global.preferencesStore.rootUserFolder);
 
       global.projectStore.reloadFromDisk();
       getAll(mainWindow);

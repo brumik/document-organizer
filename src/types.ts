@@ -25,6 +25,13 @@ export interface DatabaseType {
   documents: Record<string, Document>;
 }
 
+export interface Preferences {
+  rootUserFolder: string;
+  notificationEnabled: boolean;
+  notificationSupported: boolean;
+  windowBounds: Electron.Rectangle
+}
+
 export type PromiseErrorFormat = string;
 
 export namespace InvokePayloads {
@@ -44,4 +51,6 @@ export namespace InvokePayloads {
   export interface ShowDocumentInFolder { slug: string };
   export type ImportDatabase = Record<string, never>;
   export type ExportDatabase = Record<string, never>;
+  export type SetNotificationEnabled = { enabled: boolean};
+  export type SendTestNotification = Record<string, never>;
 }
