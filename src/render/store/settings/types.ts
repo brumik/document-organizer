@@ -7,6 +7,7 @@ export enum Action {
   toggleNotificationEnabled = 'SETTINGS_setNotificationEnabled',
   sendTestNotification = 'SETTINGS_sendTestNotification',
   sync = 'SETTINGS_sync',
+  setNotificationBeforeDays = 'SETTINGS_setNotificationBeforeDays'
 }
 
 interface SetRootFolderAction {
@@ -26,8 +27,14 @@ interface SyncAction {
   payload: State;
 }
 
+interface SetNotificationBeforeDaysAction {
+  type: Action.setNotificationBeforeDays;
+  payload: number;
+}
+
 export type ActionTypes =
   | SetRootFolderAction
   | SetNotificationEnabledAction
   | SendTestNotificationAction
-  | SyncAction;
+  | SyncAction
+  | SetNotificationBeforeDaysAction;

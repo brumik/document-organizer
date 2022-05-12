@@ -2,14 +2,13 @@ import React, { FC } from "react";
 import {
   Page,
   PageHeader,
-  PageSection,
   PageSidebar,
 } from "@patternfly/react-core";
 import Navigation from "./Utilities/Navigation";
 import logo from "./logo_512x512.png";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import SettingsPage from "./Pages/Settings";
+import { SettingsPage } from "./Pages/Settings";
 import { sync as settingsSync } from "./store/settings";
 import { sync as databaseSync } from "./store/database";
 import { useAppDispatch } from "./store/hooks";

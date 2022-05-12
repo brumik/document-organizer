@@ -16,6 +16,7 @@ class PreferencesStore extends Store<Preferences> {
         rootUserFolder: path.join(electron.app.getPath('userData'), 'user-database'),
         notificationEnabled: Notification.isSupported(),
         notificationSupported: Notification.isSupported(),
+        notificationBeforeDays: 0,
         windowBounds: {
           x: 0,
           y: 0,
@@ -49,6 +50,17 @@ class PreferencesStore extends Store<Preferences> {
       ...this.data,
       notificationEnabled: value
     });
+  }
+
+  set notificationBeforeDays(value: number) {
+    this.updateData({
+      ...this.data,
+      notificationBeforeDays: value
+    });
+  }
+
+  get notificationBeforeDays() {
+    return this.data.notificationBeforeDays;
   }
 
   get windowBounds() {

@@ -5,7 +5,7 @@ import {
 import IPC from "./general/icp";
 import { BrowserWindow, dialog, shell } from "electron";
 import namespacedSend from "./general/sendHelper";
-import copyDirectory from './copyDirectory'
+import copyDirectory from '../utility/copyDirectory'
 import { dirname } from 'path';
 
 // Import types

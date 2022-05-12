@@ -8,6 +8,7 @@ const initialState: State = {
   rootUserFolder: '',
   notificationEnabled: false,
   notificationSupported: false,
+  notificationBeforeDays: 0,
   windowBounds: {
     x: 0,
     y: 0,
@@ -32,6 +33,9 @@ const reducer = (
       return state;
     case Action.sync:
       return action.payload;
+    case Action.setNotificationBeforeDays:
+      window.api.settings.send('setNotificationBeforeDays', { value: action.payload });
+      return state;
     default:
       return state;
   }
