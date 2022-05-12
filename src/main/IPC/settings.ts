@@ -51,6 +51,15 @@ const sendTestNotification = (_mainWindow: BrowserWindow, _event: Electron.IpcMa
   }
 }
 
+const setNotificationBeforeDays = (mainWindow: BrowserWindow, _event: Electron.IpcMainEvent, message: { value: number }) => {
+  const numValue = +message.value;
+  if (Number.isInteger(numValue)) {
+    global.preferencesStore.notificationBeforeDays = numValue;
+  }
+
+  send(mainWindow, "getAll", global.preferencesStore.all);
+}
+
 
 // to Main
 const validSendChannel: SendChannels = {
@@ -58,6 +67,7 @@ const validSendChannel: SendChannels = {
   setRootFolder,
   setNotificationEnabled,
   sendTestNotification,
+  setNotificationBeforeDays
 };
 
 // from Main

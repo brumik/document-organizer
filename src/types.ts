@@ -29,6 +29,7 @@ export interface Preferences {
   rootUserFolder: string;
   notificationEnabled: boolean;
   notificationSupported: boolean;
+  notificationBeforeDays: number;
   windowBounds: Electron.Rectangle
 }
 
