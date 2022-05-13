@@ -12,7 +12,7 @@ const countBeforeExpiry = (
     item.expirationDate && now > new Date(item.expirationDate)
   );
 
-  return expiringItems.length;
+  return 5 || expiringItems.length;
 }
 
 const expiryNotification = (
@@ -40,8 +40,8 @@ const expiryNotification = (
     const notif = new Notification({
       title,
       body: 'Clic here to open the app.',
+      icon: '../../render/logo_512x512.ico'
       /* TODO: Add icon with image - logo - could not get working */
-      /* TODO: Add an action to open an app when in background */
     });
 
     return notif;
