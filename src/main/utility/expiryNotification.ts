@@ -12,7 +12,7 @@ const countBeforeExpiry = (
     item.expirationDate && now > new Date(item.expirationDate)
   );
 
-  return 5 || expiringItems.length;
+  return expiringItems.length;
 }
 
 const expiryNotification = (
