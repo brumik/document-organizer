@@ -1,5 +1,6 @@
 import { Project, Document } from "../../types"
-import { Notification } from "electron";
+import { nativeImage, Notification } from "electron";
+import logo from "../../render/logo_256x256.png";
 
 const countBeforeExpiry = (
   items: Document[] | Project[],
@@ -39,9 +40,9 @@ const expiryNotification = (
 
     const notif = new Notification({
       title,
-      body: 'Clic here to open the app.',
-      icon: '../../render/logo_512x512.ico'
-      /* TODO: Add icon with image - logo - could not get working */
+      icon: nativeImage.createFromDataURL(logo),
+      /* TODO: Add action to open the app with the filters */
+      /* TODO: body: 'Clic here to open the app.', */
     });
 
     return notif;
