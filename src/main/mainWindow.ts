@@ -30,7 +30,6 @@ class Main {
         contextIsolation: true, // protect against prototype pollution
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script 
       },
-      titleBarStyle: 'hidden',
       autoHideMenuBar: true
     });
 
